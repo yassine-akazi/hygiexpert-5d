@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Client;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 
 class ClientController extends Controller
 {
+    // Display a listing of the clients
     public function index(Request $request)
     {
         // Initialize query builder
@@ -39,28 +42,27 @@ class ClientController extends Controller
     }
 
     // Store the newly created client in the database
+
     public function store(Request $request)
-    {
-        // Validate the incoming request
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'fonction' => 'required|string|max:255',
-            'nom_entreprise' => 'required|string|max:255',
-            'ice' => 'required|numeric|unique:clients,ice',
-            'phone' => 'required|digits:10|unique:clients,phone',
-            'email' => 'required|email|unique:clients,email',
-            'password' => 'required|confirmed|min:8',
-            'adresse' => 'required|string|max:500',
-        ]);
+{
+    $validated = $request->validate([
+        'nom' => 'required|string',
+        'prenom' => 'required|string',
+        'fonction' => 'required|string',
+        'nom_entreprise' => 'required|string',
+        'ice' => 'required|unique:clients,ice',
+        'phone' => 'required|unique:clients,phone',
+        'email' => 'required|email|unique:clients,email',
+        'password' => 'required|string|min:6',
+        'adresse' => 'required|string',
+    ]);
 
-        // Create a new client in the database
-        Client::create($request->all());
+    $validated['password'] = Hash::make($validated['password']);
 
-        // Redirect back to clients list with a success message
-        return redirect()->route('admin.clients')->with('success', 'Client added successfully');
-    }
+    Client::create($validated);
 
+    return redirect()->back()->with('success', 'Client ajouté avec succès.');
+}
     // Show the form to edit an existing client
     public function edit($id)
     {
@@ -115,6 +117,8 @@ class ClientController extends Controller
         // Redirect back to clients list with a success message
         return redirect()->route('admin.clients')->with('success', 'Client deleted successfully');
     }
+
+    // Display the dashboard with client statistics
     public function dashboard()
     {
         // Fetch analytics for the dashboard
@@ -124,5 +128,4 @@ class ClientController extends Controller
         // Pass the data to the view
         return view('admin.dashboardAdmin', compact('totalClients', 'recentClients'));
     }
-
 }

@@ -37,6 +37,8 @@
                     <th class="px-6 py-3">Entreprise</th>
                     <th class="px-6 py-3">Téléphone</th>
                     <th class="px-6 py-3">Email</th>
+                    <th class="px-6 py-3">Adresse</th>
+
                     <th class="px-6 py-3 text-right">Actions</th>
                 </tr>
             </thead>
@@ -48,6 +50,8 @@
                         <td class="px-6 py-4">{{ $client->nom_entreprise }}</td>
                         <td class="px-6 py-4">{{ $client->phone }}</td>
                         <td class="px-6 py-4">{{ $client->email }}</td>
+                        <td class="px-6 py-4 ">{{ $client->adresse }}</td>
+
                         <td class="px-6 py-4 text-right space-x-2">
                             <a href="{{ route('admin.clients.edit', $client->id) }}" class="text-blue-600 hover:underline">✏️ Modifier</a>
                             <form action="{{ route('admin.clients.destroy', $client->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Supprimer ce client ?')">
@@ -65,7 +69,21 @@
             </tbody>
         </table>
     </div>
-</div>
+</div>@foreach ($clients as $client)
+    <tr>
+        <td>{{ $client->nom }}</td>
+        <!-- autres colonnes -->
+        <td>
+            <a href="{{ route('admin.clients.edit', $client->id) }}" class="text-blue-600 hover:underline">Modifier</a>
+        </td>
+    </tr>
+@endforeach
+@if (session('success'))
+    <div class="bg-green-100 text-green-800 p-2 rounded mb-4">
+        {{ session('success') }}
+    </div>
+@endif
+
 <script>
     if (document.getElementById("search-table") && typeof simpleDatatables.DataTable !== 'undefined') {
     const dataTable = new simpleDatatables.DataTable("#search-table", {

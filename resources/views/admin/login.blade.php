@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+      <style>
+      body {
+        background-image: url('/images/bg1.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    </style>
 </head>
 <body class="bg-blue-300 flex justify-center items-center h-screen">
 

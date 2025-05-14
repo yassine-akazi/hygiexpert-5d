@@ -15,8 +15,17 @@ use App\Http\Controllers\ClientController;
 */
 
 // ======== ADMIN LOGIN ROUTES ========
-Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
-Route::post('/admin/login', [AdminAuthController::class, 'login']);
+Route::middleware('web')->group(function () {
+    Route::get('/admin/login', function () {
+        if (Auth::check() && Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return view('admin.login');
+    })->name('admin.login');
+
+    Route::post('/admin/login', [AdminAuthController::class, 'login']);
+});
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
 Route::middleware([AdminMiddleware::class])->group(function () {
@@ -26,15 +35,16 @@ Route::middleware([AdminMiddleware::class])->group(function () {
         return view('admin.dashboardAdmin', compact('clientsCount'));
     })->name('admin.dashboard');
 
-    Route::get('/admin/clients', [ClientController::class, 'index'])->name('admin.clients');
-    Route::get('/admin/clients/create', [ClientController::class, 'create'])->name('admin.clients.create');
-    Route::post('/admin/clients', [ClientController::class, 'store'])->name('admin.clients.store');
-    Route::get('/admin/clients/{id}/edit', [ClientController::class, 'edit'])->name('admin.clients.edit');
-    Route::put('/admin/clients/{id}', [ClientController::class, 'update'])->name('admin.clients.update');
-    Route::delete('/admin/clients/{id}', [ClientController::class, 'destroy'])->name('admin.clients.destroy');
+    Route::get('/admin/clients', [ClientController::class, 'index'])->name('admin.clients'); // List all clients
+    Route::get('/admin/clients/create', [ClientController::class, 'create'])->name('admin.clients.create'); // Show create form
+    Route::post('/admin/clients', [ClientController::class, 'store'])->name('admin.clients.store'); // Store new client
+    Route::get('/admin/clients/{id}/edit', [ClientController::class, 'edit'])->name('admin.clients.edit'); // Show edit form
+    Route::put('/admin/clients/{id}', [ClientController::class, 'update'])->name('admin.clients.update'); // Update client
+    Route::delete('/admin/clients/{id}', [ClientController::class, 'destroy'])->name('admin.clients.destroy'); //
+    Route::resource('clients', ClientController::class);
+
  
-        Route::get('/admin/dashboard', [ClientController::class, 'dashboard'])->name('admin.dashboard');
-    
+    Route::get('/admin/dashboard', [ClientController::class, 'dashboard'])->name('admin.dashboard'); // Dashboard route    
 });
 
 // ======== CLIENT LOGIN ROUTES ========

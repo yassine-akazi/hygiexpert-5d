@@ -3,63 +3,88 @@
 @section('title', 'Admin Dashboard')
 
 @section('navbar')
-    @include('admin.partials.navbar')  <!-- Top Bar -->
+    @include('admin.partials.navbar')
 @endsection
 
 @section('sidebar')
-    @include('admin.partials.sidebar')  <!-- Sidebar -->
+    @include('admin.partials.sidebar')
 @endsection
 
 @section('content')
-    <div class="p-6 bg-white rounded shadow">
-        <h1 class="text-2xl font-semibold">Welcome to the Admin Dashboard</h1>
-        <p class="text-gray-600 mt-2">Overview of your client data.</p>
+<div class="p-6 space-y-6">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard Admin</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Suivi et analyses des clients</p>
     </div>
 
-    <!-- Analytics Section -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+    <!-- Cards Section -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Total Clients -->
-        <div class="p-4 bg-indigo-600 text-white rounded shadow">
-            <h2 class="text-xl font-semibold">Total Clients</h2>
-            <p class="text-3xl">{{ $totalClients }}</p>
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-md">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Total Clients</p>
+                    <h2 class="text-2xl font-bold text-indigo-600 dark:text-white">{{ $totalClients }}</h2>
+                </div>
+                <div class="text-green-500 text-sm font-medium">+12%</div>
+            </div>
         </div>
 
         <!-- Recent Clients -->
-        <div class="p-4 bg-gray-200 rounded shadow">
-            <h2 class="text-xl font-semibold">Recent Clients</h2>
-            <ul class="list-disc pl-4 mt-2">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-md col-span-1 sm:col-span-2 lg:col-span-1">
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Clients récents</p>
+            <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-300">
                 @foreach ($recentClients as $client)
-                    <li>{{ $client->nom }} ({{ $client->email }})</li>
+                    <li class="flex justify-between">
+                        <span>{{ $client->nom }}</span>
+                        <span class="text-gray-400">{{ $client->email }}</span>
+                    </li>
                 @endforeach
             </ul>
         </div>
-    </div>
 
-    <!-- Optional: Graph for client growth (e.g., line chart) -->
-    <div class="mt-8">
-        <canvas id="clientGrowthChart"></canvas>
-    </div>
+        
 
-    <script>
-        // Example for a line chart (replace with actual data)
-        var ctx = document.getElementById('clientGrowthChart').getContext('2d');
-        var clientGrowthChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['January', 'February', 'March', 'April', 'May'],  // Example labels
-                datasets: [{
-                    label: 'Client Growth',
-                    data: [0, 5, 10, 15, 20], // Example data, replace with actual client data
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1,
-                    fill: false
-                }]
+
+        <!-- Line Chart -->
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+              <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Croissance des clients</h3>
+              <div class="h-60">
+                  <canvas id="clientGrowthChart"></canvas>
+              </div>
+          </div>
+  
+</div>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('clientGrowthChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Janv', 'Fév', 'Mars', 'Avr', 'Mai'],
+            datasets: [{
+                label: 'Clients',
+                data: [3, 6, 9, 13, 18],
+                borderColor: '#6366F1',
+                backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                tension: 0.4,
+                fill: true,
+                borderWidth: 2,
+                pointRadius: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
             },
-            options: {
-                scales: {
-                    y: { beginAtZero: true }
-                }
+            scales: {
+                x: { ticks: { color: '#9CA3AF' } },
+                y: { beginAtZero: true, ticks: { stepSize: 5, color: '#9CA3AF' } }
             }
-        });
-    </script>
+        }
+    });
+</script>
 @endsection

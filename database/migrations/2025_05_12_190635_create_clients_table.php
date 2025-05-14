@@ -17,11 +17,12 @@ return new class extends Migration
             $table->string('prenom');
             $table->string('fonction');
             $table->string('nom_entreprise');
-            $table->bigInteger('ice')->unique();  
+            $table->bigInteger('ice')->unique();
             $table->string('phone')->unique();
             $table->string('email')->unique();
             $table->string('password');
             $table->text('adresse');
+            $table->rememberToken();
             $table->timestamps();
         });
     }
