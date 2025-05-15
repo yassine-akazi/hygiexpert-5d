@@ -32,8 +32,10 @@ class ClientController extends Controller
         $clients = $query->get();
 
         // Return the view with filtered clients
-        return view('admin.clients.index', compact('clients'));
-    }
+        $clients = $query->get();
+
+        // Return the view with filtered clients
+        return view('admin.clients.index', compact('clients'));    }
 
     // Show the form to create a new client
     public function create()
@@ -66,43 +68,32 @@ class ClientController extends Controller
     // Show the form to edit an existing client
     public function edit($id)
     {
-        // Find the client by id
         $client = Client::findOrFail($id);
-
-        // Return the edit view with the client data
         return view('admin.clients.edit', compact('client'));
     }
 
     // Update the client in the database
     public function update(Request $request, $id)
     {
-        // Validate the incoming request
-        $request->validate([
+        $client = Client::findOrFail($id);
+    
+        $validated = $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'fonction' => 'required|string|max:255',
             'nom_entreprise' => 'required|string|max:255',
-            'ice' => 'required|numeric|unique:clients,ice,' . $id,
-            'phone' => 'required|digits:10|unique:clients,phone,' . $id,
-            'email' => 'required|email|unique:clients,email,' . $id,
-            'adresse' => 'required|string|max:500',
-            'password' => 'nullable|confirmed|min:8',  // Optional password validation
+            'ice' => 'required|numeric|unique:clients,ice,' . $client->id,
+            'phone' => 'required|string|unique:clients,phone,' . $client->id,
+            'email' => 'required|email|unique:clients,email,' . $client->id,
+            'adresse' => 'required|string',
         ]);
-
-        // Find the client by id
-        $client = Client::findOrFail($id);
-
-        // Update client data, excluding the password field
-        $client->update($request->except('password'));
-
-        // If password is provided, update it as well
+    
+        $client->update($validated);
         if ($request->filled('password')) {
-            $client->password = bcrypt($request->password);
-            $client->save();
+            $client->password = Hash::make($request->password);
         }
-
-        // Redirect back to clients list with a success message
-        return redirect()->route('admin.clients')->with('success', 'Client updated successfully');
+    
+        return redirect()->route('admin.clients.index')->with('success', 'Client mis à jour avec succès.');
     }
 
     // Delete a client from the database
@@ -114,8 +105,9 @@ class ClientController extends Controller
         // Delete the client
         $client->delete();
 
+
         // Redirect back to clients list with a success message
-        return redirect()->route('admin.clients')->with('success', 'Client deleted successfully');
+        return redirect()->route('admin.clients.index')->with('success', 'Client deleted successfully');
     }
 
     // Display the dashboard with client statistics

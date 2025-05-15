@@ -20,13 +20,14 @@ Route::middleware('web')->group(function () {
         if (Auth::check() && Auth::user()->role === 'admin') {
             return redirect()->route('admin.dashboard');
         }
-
         return view('admin.login');
     })->name('admin.login');
 
     Route::post('/admin/login', [AdminAuthController::class, 'login']);
 });
+
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+
 
 Route::middleware([AdminMiddleware::class])->group(function () {
     Route::get('/admin/dashboard', function () {
@@ -41,8 +42,9 @@ Route::middleware([AdminMiddleware::class])->group(function () {
     Route::get('/admin/clients/{id}/edit', [ClientController::class, 'edit'])->name('admin.clients.edit'); // Show edit form
     Route::put('/admin/clients/{id}', [ClientController::class, 'update'])->name('admin.clients.update'); // Update client
     Route::delete('/admin/clients/{id}', [ClientController::class, 'destroy'])->name('admin.clients.destroy'); //
-    Route::resource('clients', ClientController::class);
-
+    Route::prefix('admin')->name('admin.')->middleware([AdminMiddleware::class])->group(function () {
+        Route::resource('clients', ClientController::class);
+    });
  
     Route::get('/admin/dashboard', [ClientController::class, 'dashboard'])->name('admin.dashboard'); // Dashboard route    
 });

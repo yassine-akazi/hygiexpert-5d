@@ -11,6 +11,12 @@
 @endsection
 
 @section('content')
+@if (session('success'))
+    <div class="mb-4 px-4 py-2 bg-green-100 text-green-800 border border-green-300 rounded">
+        {{ session('success') }}
+    </div>
+@endif
+
 <div class="p-6 bg-white dark:bg-gray-900 rounded shadow">
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-bold text-gray-800 dark:text-white">Liste des clients</h2>
@@ -20,7 +26,7 @@
     </div>
 
     <!-- Formulaire de filtre -->
-    <form method="GET" action="{{ route('admin.clients') }}" class="mb-6 grid md:grid-cols-3 gap-4">
+    <form method="GET" action="{{ route('admin.clients.index') }}" class="mb-6 grid md:grid-cols-3 gap-4">
         <input type="text" name="nom" value="{{ request('nom') }}" placeholder="Nom" class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white" />
         <input type="text" name="prenom" value="{{ request('prenom') }}" placeholder="Prénom" class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white" />
         <input type="text" name="email" value="{{ request('email') }}" placeholder="Email" class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white" />
@@ -69,20 +75,8 @@
             </tbody>
         </table>
     </div>
-</div>@foreach ($clients as $client)
-    <tr>
-        <td>{{ $client->nom }}</td>
-        <!-- autres colonnes -->
-        <td>
-            <a href="{{ route('admin.clients.edit', $client->id) }}" class="text-blue-600 hover:underline">Modifier</a>
-        </td>
-    </tr>
-@endforeach
-@if (session('success'))
-    <div class="bg-green-100 text-green-800 p-2 rounded mb-4">
-        {{ session('success') }}
-    </div>
-@endif
+
+
 
 <script>
     if (document.getElementById("search-table") && typeof simpleDatatables.DataTable !== 'undefined') {
