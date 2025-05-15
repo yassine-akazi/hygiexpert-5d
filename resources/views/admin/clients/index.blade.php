@@ -27,8 +27,7 @@
 
     <!-- Formulaire de filtre -->
     <form method="GET" action="{{ route('admin.clients.index') }}" class="mb-6 grid md:grid-cols-3 gap-4">
-        <input type="text" name="nom" value="{{ request('nom') }}" placeholder="Nom" class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white" />
-        <input type="text" name="prenom" value="{{ request('prenom') }}" placeholder="Prénom" class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white" />
+        <input type="text" name="prenom" value="{{ request('nom_entreprise') }}" placeholder="nom_entreprise" class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white" />
         <input type="text" name="email" value="{{ request('email') }}" placeholder="Email" class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white" />
         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 col-span-1 md:col-auto">🔍 Filtrer</button>
     </form>

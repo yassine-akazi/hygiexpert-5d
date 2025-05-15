@@ -9,19 +9,16 @@
     <!-- Menu utilisateur et déconnexion -->
     <div class="flex items-center gap-4">
       <!-- Bouton pour activer/désactiver le Dark Mode -->
-      <button onclick="document.documentElement.classList.toggle('dark')" class="text-sm text-gray-600 dark:text-gray-300">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-moon-icon lucide-sun-moon">
-          <path d="M12 8a2.83 2.83 0 0 0 4 4 4 4 0 1 1-4-4"/>
-          <path d="M12 2v2"/>
-          <path d="M12 20v2"/>
-          <path d="m4.9 4.9 1.4 1.4"/>
-          <path d="m17.7 17.7 1.4 1.4"/>
-          <path d="M2 12h2"/>
-          <path d="M20 12h2"/>
-          <path d="m6.3 17.7-1.4 1.4"/>
-          <path d="m19.1 4.9-1.4 1.4"/>
-        </svg>
-      </button>
+      <button 
+  onclick="(function(){
+    const html = document.documentElement;
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  })()" 
+  class="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+>
+  🌙/☀️
+</button>
 
       <!-- Afficher le nom de l'utilisateur connecté -->
       <span class="text-xl flex items-center   font-bold text-gray-900 dark:text-white"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-user-icon lucide-shield-user"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/> <path d="M6.376 18.91a6 6 0 0 1 11.249.003"/><circle cx="12" cy="11" r="4"/></svg> <p class="pl-1">{{ Auth::user()->name ?? 'Admin' }}</p> </span>
@@ -42,3 +39,15 @@
     </div>
   </div>
 </nav>
+
+<script>
+    function toggleTheme() {
+        if (document.documentElement.classList.contains('dark')) {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        } else {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+</script>
