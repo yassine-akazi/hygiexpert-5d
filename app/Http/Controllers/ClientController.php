@@ -12,32 +12,26 @@ class ClientController extends Controller
     // Display a listing of the clients
     public function index(Request $request)
     {
-        // Initialize query builder
         $query = Client::query();
-
-        // Apply filters if parameters are present in the request
-        if ($request->filled('nom')) {
-            $query->where('nom', 'like', '%' . $request->nom . '%');
+    
+        if ($request->filled('search')) {
+            $search = $request->search;
+    
+            $query->where(function ($q) use ($search) {
+                $q->where('nom', 'like', "%{$search}%")
+                  ->orWhere('prenom', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('nom_entreprise', 'like', "%{$search}%")
+                  ->orWhere('ice', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('adresse', 'like', "%{$search}%");
+            });
         }
-
-        if ($request->filled('prenom')) {
-            $query->where('prenom', 'like', '%' . $request->prenom . '%');
-        }
-
-        if ($request->filled('email')) {
-            $query->where('email', 'like', '%' . $request->email . '%');
-        }
-
-        // Get filtered clients
+    
         $clients = $query->get();
-
-        // Return the view with filtered clients
-        $clients = $query->get();
-
-        // Return the view with filtered clients
-        return view('admin.clients.index', compact('clients'));    }
-
-    // Show the form to create a new client
+    
+        return view('admin.clients.index', compact('clients'));
+    }
     public function create()
     {
         return view('admin.clients.create');
@@ -52,7 +46,7 @@ class ClientController extends Controller
         'prenom' => 'required|string',
         'fonction' => 'required|string',
         'nom_entreprise' => 'required|string',
-        'ice' => 'required|unique:clients,ice',
+        'ice' => 'required|unique:clients,ice|regex:/^\d+$/',
         'phone' => 'required|unique:clients,phone',
         'email' => 'required|email|unique:clients,email',
         'password' => 'required|string|min:6',
@@ -93,7 +87,7 @@ class ClientController extends Controller
             $client->password = Hash::make($request->password);
         }
     
-        return redirect()->route('admin.clients.index')->with('success', 'Client mis à jour avec succès.');
+        return redirect()->route('admin.clients')->with('success', 'Client mis à jour avec succès.');
     }
 
     // Delete a client from the database
@@ -107,7 +101,7 @@ class ClientController extends Controller
 
 
         // Redirect back to clients list with a success message
-        return redirect()->route('admin.clients.index')->with('success', 'Client deleted successfully');
+        return redirect()->route('admin.clients')->with('success', 'Client deleted successfully');
     }
 
     // Display the dashboard with client statistics
@@ -120,4 +114,45 @@ class ClientController extends Controller
         // Pass the data to the view
         return view('admin.dashboardAdmin', compact('totalClients', 'recentClients'));
     }
+    public function showUploadForm($clientId)
+    {
+        $client = Client::findOrFail($clientId);
+        return view('admin.clients.upload', compact('client'));
+    }
+    
+    public function upload(Request $request, $id)
+    {
+        $request->validate([
+            'pdf_path' => 'required|mimes:pdf|max:10240',
+            'plan_path' => 'required|mimes:pdf|max:10240',
+            'rapport_diagnostic_path' => 'required|mimes:pdf|max:10240',
+            'fiche_intervention_path' => 'required|mimes:pdf|max:10240',
+            'attestation_traitement_path' => 'required|mimes:pdf|max:10240',
+            'evaluation_trimestrielle_path' => 'required|mimes:pdf|max:10240',
+            'analyse_tendance_annuelle_path' => 'required|mimes:pdf|max:10240',
+            'attestation_mygiexpert5d_path' => 'required|mimes:pdf|max:10240',
+            'autre1_path' => 'required|mimes:pdf|max:10240',
+            'autre2_path' => 'required|mimes:pdf|max:10240',
+        ]);
+    
+        $client = Client::findOrFail($id);
+    
+        $client->pdf_path = $request->file('pdf_path')->store('uploads/pdfs', 'public');
+        $client->plan_path = $request->file('plan_path')->store('uploads/pdfs', 'public');
+        $client->rapport_diagnostic_path = $request->file('rapport_diagnostic_path')->store('uploads/pdfs', 'public');
+        $client->fiche_intervention_path = $request->file('fiche_intervention_path')->store('uploads/pdfs', 'public');
+        $client->attestation_traitement_path = $request->file('attestation_traitement_path')->store('uploads/pdfs', 'public');
+        $client->evaluation_trimestrielle_path = $request->file('evaluation_trimestrielle_path')->store('uploads/pdfs', 'public');
+        $client->analyse_tendance_annuelle_path = $request->file('analyse_tendance_annuelle_path')->store('uploads/pdfs', 'public');
+        $client->attestation_mygiexpert5d_path = $request->file('attestation_mygiexpert5d_path')->store('uploads/pdfs', 'public');
+        $client->autre1_path = $request->file('autre1_path')->store('uploads/pdfs', 'public');
+        $client->autre2_path = $request->file('autre2_path')->store('uploads/pdfs', 'public');
+    
+        $client->save();
+    
+        return redirect()->route('admin.clients.upload.form', $id)->with('success', 'Fichiers enregistrés avec succès.');
+    }
+
+
+    
 }

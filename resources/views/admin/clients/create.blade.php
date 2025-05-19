@@ -11,9 +11,14 @@
 @endsection
 
 @section('content')
+@if (session('success'))
+    <div class="mb-6 p-4 text-green-800 bg-green-100 border border-green-400 rounded">
+        {{ session('success') }}
+    </div>
+@endif
 @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
+    <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <ul class="list-disc list-inside space-y-1">
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
             @endforeach
@@ -24,7 +29,7 @@
     <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
         <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">Ajouter un client</h2>
 
-        <form method="POST" action="{{ route('admin.clients.store') }}" class="space-y-6">
+        <form id="registerForm" method="POST" action="{{ route('admin.clients.store') }}" class="space-y-6">
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -54,7 +59,7 @@
 
                 <div>
                     <label for="ice" class="block text-sm font-medium text-gray-700 dark:text-gray-300">ICE</label>
-                    <input type="text" name="ice" id="ice" required
+                    <input type="text" name="ice" id="ice" pattern="\d+" title="Seulement des chiffres" required
                         class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
 
@@ -70,26 +75,26 @@
                     <input type="email" name="email" id="email" required
                         class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
-                   <div>
-                <label for="adresse" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Adresse</label>
-                <textarea name="adresse" id="adresse" rows="4" required
-                    class="mt-1 w-full px-4 py-0 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"></textarea>
-            </div>
+
+                <div>
+                    <label for="adresse" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Adresse</label>
+                    <textarea name="adresse" id="adresse" rows="4" required
+                        class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                </div>
 
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Mot de passe</label>
-                    <input type="password" name="password" id="password" required
+                    <input id="password" type="password" name="password" required
                         class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
 
                 <div>
                     <label for="password_confirmation" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirmer le mot de passe</label>
-                    <input type="password" name="password_confirmation" id="password_confirmation" required
+                    <input id="password_confirmation" type="password" name="password_confirmation" required
                         class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
+                    <p id="error-message" class="text-red-600 mt-1" style="display:none;">Les mots de passe ne correspondent pas.</p>
                 </div>
             </div>
-
-         
 
             <div class="text-right">
                 <button type="submit"
@@ -101,18 +106,25 @@
     </div>
 </div>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('registerForm');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('password_confirmation');
+    const errorMessage = document.getElementById('error-message');
 
- <!-- <form action="{{ route('admin.clients.store') }}" method="POST">
-    @csrf
-    <input type="text" name="nom" placeholder="Nom" required>
-    <input type="text" name="prenom" placeholder="Prénom" required>
-    <input type="text" name="fonction" placeholder="Fonction" required>
-    <input type="text" name="nom_entreprise" placeholder="Nom de l'entreprise" required>
-    <input type="number" name="ice" placeholder="ICE" required>
-    <input type="text" name="phone" placeholder="Téléphone" required>
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="password" name="password" placeholder="Mot de passe" required>
-    <textarea name="adresse" placeholder="Adresse" required></textarea>
-    <button type="submit">Ajouter</button>
-</form> -->
+    form.addEventListener('submit', function(event) {
+      if (password.value !== confirmPassword.value) {
+        event.preventDefault(); // Empêche l'envoi du formulaire
+        errorMessage.style.display = 'block';
+      } else {
+        errorMessage.style.display = 'none';
+      }
+    });
+
+    // Cacher l'erreur quand l'utilisateur tape dans les champs password
+    password.addEventListener('input', () => errorMessage.style.display = 'none');
+    confirmPassword.addEventListener('input', () => errorMessage.style.display = 'none');
+  });
+</script>
 @endsection

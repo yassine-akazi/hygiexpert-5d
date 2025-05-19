@@ -9,14 +9,18 @@ class AddRememberTokenToClientsTable extends Migration
     public function up()
     {
         Schema::table('clients', function (Blueprint $table) {
-            $table->rememberToken(); // Add this line
+            if (!Schema::hasColumn('clients', 'remember_token')) {
+                $table->string('remember_token', 100)->nullable();
+            }
         });
     }
-
+    
     public function down()
     {
         Schema::table('clients', function (Blueprint $table) {
-            $table->dropColumn('remember_token'); // Drop this column if rolling back the migration
+            if (Schema::hasColumn('clients', 'remember_token')) {
+                $table->dropColumn('remember_token');
+            }
         });
     }
 }

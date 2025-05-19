@@ -29,4 +29,28 @@
     <!-- Add this to the head section -->
 
 </body>
+<script>
+  // Initialisation du thème au chargement
+  if (
+    localStorage.getItem('theme') === 'dark' ||
+    (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)
+  ) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+
+  // Bouton de bascule
+  document.getElementById('toggleDarkMode').addEventListener('click', () => {
+    const html = document.documentElement;
+    html.classList.toggle('dark');
+
+    const isDark = html.classList.contains('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+
+    // Mise à jour manuelle (facultatif car Tailwind gère avec `dark:`)
+    document.getElementById('icon-sun').classList.toggle('hidden', isDark);
+    document.getElementById('icon-moon').classList.toggle('hidden', !isDark);
+  });
+</script>
 </html>

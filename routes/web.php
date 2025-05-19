@@ -2,10 +2,12 @@
 
 
 use Illuminate\Support\Facades\Route;
+use App\Models\Client;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DocumentController;
 
 
 /*
@@ -29,24 +31,33 @@ Route::middleware('web')->group(function () {
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
 
-Route::middleware([AdminMiddleware::class])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        $clientsCount = \App\Models\Client::count();
+Route::middleware([AdminMiddleware::class])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
 
-        return view('admin.dashboardAdmin', compact('clientsCount'));
-    })->name('admin.dashboard');
+    // Dashboard
+    Route::get('/dashboard', function () {
+        $totalClients = Client::count();
 
-    Route::get('/admin/clients', [ClientController::class, 'index'])->name('admin.clients'); // List all clients
-    Route::get('/admin/clients/create', [ClientController::class, 'create'])->name('admin.clients.create'); // Show create form
-    Route::post('/admin/clients', [ClientController::class, 'store'])->name('admin.clients.store'); // Store new client
-    Route::get('/admin/clients/{id}/edit', [ClientController::class, 'edit'])->name('admin.clients.edit'); // Show edit form
-    Route::put('/admin/clients/{id}', [ClientController::class, 'update'])->name('admin.clients.update'); // Update client
-    Route::delete('/admin/clients/{id}', [ClientController::class, 'destroy'])->name('admin.clients.destroy'); //
-    Route::prefix('admin')->name('admin.')->middleware([AdminMiddleware::class])->group(function () {
-        Route::resource('clients', ClientController::class);
-    });
- 
-    Route::get('/admin/dashboard', [ClientController::class, 'dashboard'])->name('admin.dashboard'); // Dashboard route    
+        $recentClients = Client::orderBy('created_at', 'desc')->take(5)->get(); // 5 clients récents
+
+        return view('admin.dashboardAdmin', compact('totalClients', 'recentClients'));
+    })->name('dashboard');
+
+    // Clients
+    Route::get('/clients', [ClientController::class, 'index'])->name('clients');
+    Route::get('/clients/create', [ClientController::class, 'create'])->name('clients.create');
+    Route::post('/clients', [ClientController::class, 'store'])->name('clients.store');
+    Route::get('/clients/{id}/edit', [ClientController::class, 'edit'])->name('clients.edit');
+    Route::put('/clients/{id}', [ClientController::class, 'update'])->name('clients.update');
+    Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
+
+    Route::get('/clients/{client}/upload', [ClientController::class, 'showUploadForm'])
+    ->name('clients.upload.form');
+
+Route::post('/clients/{id}/upload', [ClientController::class, 'upload'])
+    ->name('clients.upload');
 });
 
 // ======== CLIENT LOGIN ROUTES ========
@@ -62,4 +73,8 @@ Route::middleware(['auth:client'])->group(function () {
     Route::get('/client/dashboard', function () {
         return view('admin.clients.dashboard');  // You may have a view like this for client dashboard
     })->name('client.dashboard');
+});
+
+Route::get('/php-info', function () {
+    phpinfo();
 });

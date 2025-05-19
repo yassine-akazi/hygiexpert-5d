@@ -21,24 +21,24 @@
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-bold text-gray-800 dark:text-white">Liste des clients</h2>
         <a href="{{ route('admin.clients.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">
-            ➕ Ajouter un client
-        </a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-plus-icon lucide-user-round-plus"><path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/><path d="M19 16v6"/><path d="M22 19h-6"/></svg>        </a>
     </div>
 
     <!-- Formulaire de filtre -->
-    <form method="GET" action="{{ route('admin.clients.index') }}" class="mb-6 grid md:grid-cols-3 gap-4">
-        <input type="text" name="prenom" value="{{ request('nom_entreprise') }}" placeholder="nom_entreprise" class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white" />
-        <input type="text" name="email" value="{{ request('email') }}" placeholder="Email" class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white" />
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 col-span-1 md:col-auto">🔍 Filtrer</button>
-    </form>
-
+    <form method="GET" action="{{ route('admin.clients') }}" class="mb-6 flex gap-4">
+    <input type="text" name="search" value="{{ request('search') }}" placeholder="Rechercher un client..." class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white w-full" />
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+    </button>
+</form>
+</form>
     <!-- Tableau -->
     <div class="overflow-x-auto">
         <table class="min-w-full text-sm text-left text-gray-700 dark:text-gray-300">
             <thead class="text-xs bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white uppercase">
                 <tr>
-                    <th class="px-6 py-3">Nom</th>
-                    <th class="px-6 py-3">Prénom</th>
+                    <th class="px-6 py-3">Nom et Prénom</th>
+                    <th class="px-6 py-3">ICE </th>
                     <th class="px-6 py-3">Entreprise</th>
                     <th class="px-6 py-3">Téléphone</th>
                     <th class="px-6 py-3">Email</th>
@@ -50,8 +50,8 @@
             <tbody>
                 @forelse($clients as $client)
                     <tr class="bg-white dark:bg-gray-900 border-b dark:border-gray-700">
-                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $client->nom }}</td>
-                        <td class="px-6 py-4">{{ $client->prenom }}</td>
+                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $client->nom }} <p> </p> {{ $client->prenom }}</td>
+                        <td class="px-6 py-4">{{ $client->ice }}</td>
                         <td class="px-6 py-4">{{ $client->nom_entreprise }}</td>
                         <td class="px-6 py-4">{{ $client->phone }}</td>
                         <td class="px-6 py-4">{{ $client->email }}</td>
@@ -68,26 +68,29 @@
     </a>
 
     <!-- Supprimer (rouge) -->
-    <form action="{{ route('admin.clients.destroy', $client->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Supprimer ce client ?')">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="text-red-600 hover:underline">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-minus-icon">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <line x1="22" x2="16" y1="11" y2="11"/>
-            </svg>
-        </button>
-    </form>
+    <form id="delete-form-{{ $client->id }}" action="{{ route('admin.clients.destroy', $client->id) }}" method="POST" class="inline-block">
+                @csrf
+                @method('DELETE')
+                <button type="button" onclick="openConfirmModal({{ $client->id }})" class="text-red-600 hover:underline flex items-center space-x-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <line x1="22" x2="16" y1="11" y2="11"/>
+                    </svg>
+                   
+                </button>
+            </form>
 
     <!-- Ajouter (vert) -->
-    <a href="{{ route('admin.clients.edit', $client->id) }}" class="text-green-600 hover:underline">
+    
+    <a href=" {{ route('admin.clients.upload.form', $client->id) }}" class="text-green-600 hover:underline">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-plus-icon">
             <path d="M12 10v6"/>
             <path d="M9 13h6"/>
             <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
         </svg>
     </a>
+
 </td>
                     </tr>
                 @empty
@@ -98,6 +101,21 @@
             </tbody>
         </table>
     </div>
+<!-- MODALE DE CONFIRMATION -->
+<div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
+        <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Confirmation de suppression</h2>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Es-tu sûr de vouloir supprimer ce client ? Cette action est irréversible.</p>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeConfirmModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-700">
+                Annuler
+            </button>
+            <button id="confirmDeleteBtn" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                Supprimer
+            </button>
+        </div>
+    </div>
+</div>
 
 
 
@@ -108,5 +126,23 @@
         sortable: false
     });
 }
+
+let currentFormId = null;
+
+function openConfirmModal(clientId) {
+    currentFormId = `delete-form-${clientId}`;
+    document.getElementById('confirmModal').classList.remove('hidden');
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirmModal').classList.add('hidden');
+    currentFormId = null;
+}
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+    if (currentFormId) {
+        document.getElementById(currentFormId).submit();
+    }
+});
 </script>
 @endsection
