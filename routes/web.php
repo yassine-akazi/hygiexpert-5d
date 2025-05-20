@@ -53,7 +53,7 @@ Route::middleware([AdminMiddleware::class])
     Route::put('/clients/{id}', [ClientController::class, 'update'])->name('clients.update');
     Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
 
-    Route::get('/clients/{client}/upload', [ClientController::class, 'showUploadForm'])
+  Route::get('/clients/{client}/upload', [ClientController::class, 'showUploadForm'])
     ->name('clients.upload.form');
 
 Route::post('/clients/{id}/upload', [ClientController::class, 'upload'])

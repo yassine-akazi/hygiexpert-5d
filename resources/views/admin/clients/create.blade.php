@@ -82,17 +82,42 @@
                         class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"></textarea>
                 </div>
 
+         
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Mot de passe</label>
-                    <input id="password" type="password" name="password" required
-                        class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
+                    <div class="relative">
+                        <input id="password" type="password" name="password"
+                            class="mt-1 w-full px-4 py-2 pr-10 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
+                        <button type="button" onclick="togglePassword('password', this)"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-600 dark:text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-eye-icon">
+                                <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <div>
                     <label for="password_confirmation" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirmer le mot de passe</label>
-                    <input id="password_confirmation" type="password" name="password_confirmation" required
-                        class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
-                    <p id="error-message" class="text-red-600 mt-1" style="display:none;">Les mots de passe ne correspondent pas.</p>
+                    <div class="relative">
+                        <input id="password_confirmation" type="password" name="password_confirmation"
+                            class="mt-1 w-full px-4 py-2 pr-10 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500">
+                        <button type="button" onclick="togglePassword('password_confirmation', this)"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-600 dark:text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-eye-icon">
+                                <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                    </div>
+                    <p id="error-message" class="text-red-600 mt-1 hidden">Les mots de passe ne correspondent pas.</p>
                 </div>
             </div>
 
@@ -126,5 +151,38 @@
     password.addEventListener('input', () => errorMessage.style.display = 'none');
     confirmPassword.addEventListener('input', () => errorMessage.style.display = 'none');
   });
+  function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+
+        const showIcon = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-eye-icon">
+                <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696
+                10.75 10.75 0 0 1-19.876 0" />
+                <circle cx="12" cy="12" r="3" />
+            </svg>`;
+
+        const hideIcon = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-eye-closed-icon">
+                <path d="m15 18-.722-3.25"/>
+                <path d="M2 8a10.645 10.645 0 0 0 20 0"/>
+                <path d="m20 15-1.726-2.05"/>
+                <path d="m4 15 1.726-2.05"/>
+                <path d="m9 18 .722-3.25"/>
+            </svg>`;
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            button.innerHTML = hideIcon;
+        } else {
+            input.type = 'password';
+            button.innerHTML = showIcon;
+        }
+    }
 </script>
 @endsection

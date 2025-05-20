@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Client;
+use App\Models\Document;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,18 +14,25 @@ class ClientController extends Controller
     public function index(Request $request)
     {
         $query = Client::query();
+        $search = $request->search;
+        $terms = explode(' ', $search);
+
     
         if ($request->filled('search')) {
             $search = $request->search;
     
-            $query->where(function ($q) use ($search) {
-                $q->where('nom', 'like', "%{$search}%")
-                  ->orWhere('prenom', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('nom_entreprise', 'like', "%{$search}%")
-                  ->orWhere('ice', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%")
-                  ->orWhere('adresse', 'like', "%{$search}%");
+            $query->where(function ($q) use ($terms) {
+                foreach ($terms as $term) {
+                    $q->where(function ($q2) use ($term) {
+                        $q2->where('nom', 'like', "%{$term}%")
+                           ->orWhere('prenom', 'like', "%{$term}%")
+                           ->orWhere('email', 'like', "%{$term}%")
+                           ->orWhere('nom_entreprise', 'like', "%{$term}%")
+                           ->orWhere('ice', 'like', "%{$term}%")
+                           ->orWhere('phone', 'like', "%{$term}%")
+                           ->orWhere('adresse', 'like', "%{$term}%");
+                    });
+                }
             });
         }
     
@@ -120,38 +128,47 @@ class ClientController extends Controller
         return view('admin.clients.upload', compact('client'));
     }
     
+
     public function upload(Request $request, $id)
-    {
-        $request->validate([
-            'pdf_path' => 'required|mimes:pdf|max:10240',
-            'plan_path' => 'required|mimes:pdf|max:10240',
-            'rapport_diagnostic_path' => 'required|mimes:pdf|max:10240',
-            'fiche_intervention_path' => 'required|mimes:pdf|max:10240',
-            'attestation_traitement_path' => 'required|mimes:pdf|max:10240',
-            'evaluation_trimestrielle_path' => 'required|mimes:pdf|max:10240',
-            'analyse_tendance_annuelle_path' => 'required|mimes:pdf|max:10240',
-            'attestation_mygiexpert5d_path' => 'required|mimes:pdf|max:10240',
-            'autre1_path' => 'required|mimes:pdf|max:10240',
-            'autre2_path' => 'required|mimes:pdf|max:10240',
-        ]);
-    
-        $client = Client::findOrFail($id);
-    
-        $client->pdf_path = $request->file('pdf_path')->store('uploads/pdfs', 'public');
-        $client->plan_path = $request->file('plan_path')->store('uploads/pdfs', 'public');
-        $client->rapport_diagnostic_path = $request->file('rapport_diagnostic_path')->store('uploads/pdfs', 'public');
-        $client->fiche_intervention_path = $request->file('fiche_intervention_path')->store('uploads/pdfs', 'public');
-        $client->attestation_traitement_path = $request->file('attestation_traitement_path')->store('uploads/pdfs', 'public');
-        $client->evaluation_trimestrielle_path = $request->file('evaluation_trimestrielle_path')->store('uploads/pdfs', 'public');
-        $client->analyse_tendance_annuelle_path = $request->file('analyse_tendance_annuelle_path')->store('uploads/pdfs', 'public');
-        $client->attestation_mygiexpert5d_path = $request->file('attestation_mygiexpert5d_path')->store('uploads/pdfs', 'public');
-        $client->autre1_path = $request->file('autre1_path')->store('uploads/pdfs', 'public');
-        $client->autre2_path = $request->file('autre2_path')->store('uploads/pdfs', 'public');
-    
-        $client->save();
-    
-        return redirect()->route('admin.clients.upload.form', $id)->with('success', 'Fichiers enregistrés avec succès.');
+{
+    $client = Client::findOrFail($id);
+
+    $fields = [
+        'pdf_path', 'plan_path', 'rapport_diagnostic_path', 'fiche_intervention_path',
+        'attestation_traitement_path', 'evaluation_trimestrielle_path', 'analyse_tendance_annuelle_path',
+        'attestation_mygiexpert5d_path', 'autre1_path', 'autre2_path'
+    ];
+
+    $rules = [];
+    foreach ($fields as $field) {
+        $rules[$field] = 'nullable|file|mimes:pdf|max:10240';  // Validation optionnelle
     }
+
+    $request->validate($rules);
+
+    $uploaded = false;  // <-- Bien initialiser ici AVANT la boucle
+
+    foreach ($fields as $field) {
+        if ($request->hasFile($field)) {
+            $file = $request->file($field);
+            $path = $file->store('uploads/pdfs', 'public');
+
+            Document::create([
+                'client_id' => $client->id,
+                'type' => $field,
+                'path' => $path,
+            ]);
+
+            $uploaded = true;  // On marque qu’au moins un fichier a été uploadé
+        }
+    }
+
+    if ($uploaded) {
+        return redirect()->back()->with('success', 'Les fichiers ont été uploadés avec succès.');
+    } else {
+        return redirect()->back()->with('error', 'Aucun fichier n’a été uploadé.');
+    }
+}
 
 
     
