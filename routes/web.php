@@ -8,6 +8,12 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\ClientDashboardController;
+use App\Http\Middleware\RedirectIfNotClient;
+use App\Http\Middleware\RedirectIfClientAuthenticated;
+;
+
+
 
 
 /*
@@ -29,7 +35,7 @@ Route::middleware('web')->group(function () {
 });
 
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
-
+// ======== ADMIN DASHBOARD ROUTES ========
 
 Route::middleware([AdminMiddleware::class])
     ->prefix('admin')
@@ -46,6 +52,7 @@ Route::get('/clients/{id}/pdfs', [ClientController::class, 'showClientPdfsByYear
 
         
         
+
 
     // Dashboard
     Route::get('/dashboard', function () {
@@ -64,29 +71,41 @@ Route::get('/clients/{id}/pdfs', [ClientController::class, 'showClientPdfsByYear
     Route::put('/clients/{id}', [ClientController::class, 'update'])->name('clients.update');
     Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
 
+    // Documents
   Route::get('/clients/{client}/upload', [ClientController::class, 'showUploadForm'])
     ->name('clients.upload.form');
-
+    
 Route::post('/clients/{id}/upload', [ClientController::class, 'upload'])
     ->name('clients.upload');
     
 });
-Route::middleware(['web'])->group(function () {
-    Route::get('/client/login', function () {
-        return view('admin.clients.login');
-    })->name('client.login');
+// ======== CLIENT LOGIN ROUTES ========
 
-    Route::get('/client/login', [ClientAuthController::class, 'showLoginForm'])->name('client.login');
-Route::post('/client/login', [ClientAuthController::class, 'login']);
-Route::post('/client/logout', [ClientAuthController::class, 'logout'])->name('client.logout');
+
+Route::middleware([RedirectIfClientAuthenticated::class])->name('client.')->group(function () {
+    Route::get('/login', [ClientAuthController::class, 'showLoginForm'])->name('login.form');
+    Route::post('/login', [ClientAuthController::class, 'login'])->name('login');
+
 });
 
-Route::middleware('auth:client')->group(function () {
-    Route::get('/client/dashboard', function () {
-        return view('admin.clients.dashboard');
-    })->name('client.dashboard');
+
+
+// ======== CLIENT DASHBOARD ROUTES ========
+
+Route::middleware([RedirectIfNotClient::class])->prefix('client')->name('client.')->group(function () {
+    Route::get('/dashboard', [ClientDashboardController::class, 'index'])->name('dashboard');
+    Route::post('/documents/download-zip', [ClientDashboardController::class, 'downloadSelectedZip'])->name('documents.downloadZip');
+
+    Route::get('/pdfs', [ClientDashboardController::class, 'showPdfs'])->name('pdfs');
+    Route::post('/logout', [ClientAuthController::class, 'logout'])->name('logout');
+
+
 });
+
+
 Route::get('/test-middleware', function () {
     $middleware = app(\App\Http\Middleware\AuthenticateClient::class);
     return 'Middleware instancié avec succès : ' . get_class($middleware);
 });
+
+

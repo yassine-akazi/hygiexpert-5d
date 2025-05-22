@@ -274,5 +274,14 @@ class ClientController extends Controller
     
         return view('admin.clients.showPdfsByYear', compact('client', 'documentsGrouped', 'labels', 'years', 'year', 'months', 'month'));
     }
+    public function logout(Request $request)
+{
+    Auth::guard('client')->logout(); // déconnecte le client
+
+    $request->session()->invalidate(); // invalide la session
+    $request->session()->regenerateToken(); // régénère le token CSRF
+
+    return redirect()->route('client.login.form'); // redirige vers la page de login
+}
 
 }
