@@ -90,6 +90,9 @@
             <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
         </svg>
     </a>
+    <a href="{{ route('admin.clients.showPdfsByYear', $client->id) }}" class="text-purple-600 hover:text-purple-800" title="Voir les fichiers PDF">
+    <!-- Icône œil -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-archive-icon lucide-archive"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg></a>
 
 </td>
                     </tr>
@@ -107,10 +110,10 @@
         <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Confirmation de suppression</h2>
         <p class="text-gray-600 dark:text-gray-300 mb-6">Es-tu sûr de vouloir supprimer ce client ? Cette action est irréversible.</p>
         <div class="flex justify-end space-x-3">
-            <button onclick="closeConfirmModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-700">
+            <button onclick="closeConfirmModal()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
                 Annuler
             </button>
-            <button id="confirmDeleteBtn" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+            <button id="confirmDeleteBtn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-700">
                 Supprimer
             </button>
         </div>

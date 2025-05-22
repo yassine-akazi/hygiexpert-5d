@@ -45,49 +45,52 @@
         
 
 
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-    <h3 class="text-xl font-medium text-gray-700 dark:text-gray-300 mb-4">Croissance des clients</h3>
-    <div class="h-60">
-        <canvas id="clientGrowthChart"></canvas>
-    </div>
-</div>
-
+        <!-- Line Chart -->
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+              <h3 class="text-xl font-medium text-gray-700 dark:text-gray-300 mb-4">Croissance des clients</h3>
+              <div class="h-60">
+                  <canvas id="clientGrowthChart"></canvas>
+              </div>
+          </div>
   
 </div>
 
 <!-- Chart.js Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const labels = @json($labels ?? []);
-    const data = @json($data ?? []);
+  const ctx = document.getElementById('clientGrowthChart').getContext('2d');
 
-    const ctx = document.getElementById('clientGrowthChart').getContext('2d');
+// Exemple de données, à remplacer par des données dynamiques venant du serveur
+const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+const data = {
+    labels: labels,
+    datasets: [{
+        label: 'Nombre de clients',
+        data: [12, 19, 3, 5, 2, 7], // données à remplacer
+        fill: false,
+        borderColor: 'rgb(99, 102, 241)', // indigo-600 en Tailwind
+        tension: 0.1
+    }]
+};
 
-    const chartData = {
-        labels: labels,
-        datasets: [{
-            label: 'Nombre de clients',
-            data: data,
-            fill: false,
-            borderColor: 'rgb(99, 102, 241)', // Indigo 600
-            tension: 0.1
-        }]
-    };
-
-    const config = {
-        type: 'line',
-        data: chartData,
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1 }
+const config = {
+    type: 'line',
+    data: data,
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
                 }
             }
         }
-    };
+    }
+};
 
-    new Chart(ctx, config);
+const clientGrowthChart = new Chart(ctx, config);
+
 </script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 @endsection

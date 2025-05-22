@@ -1,38 +1,40 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Client;
 
 class ClientAuthController extends Controller
 {
-    // Handle client login
+    public function showLoginForm()
+    {
+        return view('admin.clients.login');
+    }
+
     public function login(Request $request)
     {
-        // Validate the login data
-        $request->validate([
+        $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required|min:8',
+            'password' => 'required',
         ]);
 
-        // Attempt to log the client in
-        if (Auth::guard('client')->attempt([
-            'email' => $request->email,
-            'password' => $request->password,
-        ], $request->remember)) {
-            // Authentication passed, redirect to the client dashboard
+        if (Auth::guard('client')->attempt($credentials)) {
+            $request->session()->regenerate();
             return redirect()->route('client.dashboard');
         }
 
-        // Authentication failed, redirect back with an error
-        return redirect()->back()->withErrors(['email' => 'Invalid credentials']);
+        return back()->withErrors([
+            'email' => 'Email ou mot de passe incorrect.',
+        ]);
     }
 
-    // Handle client logout
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::guard('client')->logout();
-        return redirect()->route('client.login'); // Redirect to login page
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('client.login');
     }
 }

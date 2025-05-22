@@ -3,82 +3,76 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Smalot\PdfParser\Parser;
+
 use App\Models\Client;
 use App\Models\Document;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ClientController extends Controller
 {
-    // Display a listing of the clients
+    // Liste clients avec recherche
     public function index(Request $request)
     {
         $query = Client::query();
-        $search = $request->search;
-        $terms = explode(' ', $search);
-
-    
         if ($request->filled('search')) {
-            $search = $request->search;
-    
+            $terms = explode(' ', $request->search);
             $query->where(function ($q) use ($terms) {
                 foreach ($terms as $term) {
                     $q->where(function ($q2) use ($term) {
-                        $q2->where('nom', 'like', "%{$term}%")
-                           ->orWhere('prenom', 'like', "%{$term}%")
-                           ->orWhere('email', 'like', "%{$term}%")
-                           ->orWhere('nom_entreprise', 'like', "%{$term}%")
-                           ->orWhere('ice', 'like', "%{$term}%")
-                           ->orWhere('phone', 'like', "%{$term}%")
-                           ->orWhere('adresse', 'like', "%{$term}%");
+                        $q2->where('nom', 'like', "%$term%")
+                           ->orWhere('prenom', 'like', "%$term%")
+                           ->orWhere('email', 'like', "%$term%")
+                           ->orWhere('nom_entreprise', 'like', "%$term%")
+                           ->orWhere('ice', 'like', "%$term%")
+                           ->orWhere('phone', 'like', "%$term%")
+                           ->orWhere('adresse', 'like', "%$term%");
                     });
                 }
             });
         }
-    
         $clients = $query->get();
-    
         return view('admin.clients.index', compact('clients'));
     }
+
+    // Formulaire création client
     public function create()
     {
         return view('admin.clients.create');
     }
 
-    // Store the newly created client in the database
-
+    // Stocker un client
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'nom' => 'required|string',
-        'prenom' => 'required|string',
-        'fonction' => 'required|string',
-        'nom_entreprise' => 'required|string',
-        'ice' => 'required|unique:clients,ice|regex:/^\d+$/',
-        'phone' => 'required|unique:clients,phone',
-        'email' => 'required|email|unique:clients,email',
-        'password' => 'required|string|min:6',
-        'adresse' => 'required|string',
-    ]);
+    {
+        $validated = $request->validate([
+            'nom' => 'required|string',
+            'prenom' => 'required|string',
+            'fonction' => 'required|string',
+            'nom_entreprise' => 'required|string',
+            'ice' => 'required|unique:clients,ice|regex:/^\d+$/',
+            'phone' => 'required|unique:clients,phone',
+            'email' => 'required|email|unique:clients,email',
+            'password' => 'required|string|min:6',
+            'adresse' => 'required|string',
+        ]);
+        $validated['password'] = Hash::make($validated['password']);
+        Client::create($validated);
 
-    $validated['password'] = Hash::make($validated['password']);
+        return redirect()->back()->with('success', 'Client ajouté avec succès.');
+    }
 
-    Client::create($validated);
-
-    return redirect()->back()->with('success', 'Client ajouté avec succès.');
-}
-    // Show the form to edit an existing client
+    // Formulaire édition client
     public function edit($id)
     {
         $client = Client::findOrFail($id);
         return view('admin.clients.edit', compact('client'));
     }
 
-    // Update the client in the database
+    // Mise à jour client
     public function update(Request $request, $id)
     {
         $client = Client::findOrFail($id);
-    
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
@@ -88,88 +82,197 @@ class ClientController extends Controller
             'phone' => 'required|string|unique:clients,phone,' . $client->id,
             'email' => 'required|email|unique:clients,email,' . $client->id,
             'adresse' => 'required|string',
+            'password' => 'nullable|string|min:6',
         ]);
-    
-        $client->update($validated);
+
         if ($request->filled('password')) {
-            $client->password = Hash::make($request->password);
+            $validated['password'] = Hash::make($request->password);
+        } else {
+            unset($validated['password']);
         }
-    
+
+        $client->update($validated);
+
         return redirect()->route('admin.clients')->with('success', 'Client mis à jour avec succès.');
     }
 
-    // Delete a client from the database
+    // Supprimer client
     public function destroy($id)
     {
-        // Find the client by id
         $client = Client::findOrFail($id);
-
-        // Delete the client
         $client->delete();
 
-
-        // Redirect back to clients list with a success message
-        return redirect()->route('admin.clients')->with('success', 'Client deleted successfully');
+        return redirect()->route('admin.clients')->with('success', 'Client supprimé avec succès.');
     }
 
-    // Display the dashboard with client statistics
+    // Dashboard admin
     public function dashboard()
     {
-        // Fetch analytics for the dashboard
-        $totalClients = Client::count(); // Get the total number of clients
-        $recentClients = Client::latest()->take(5)->get(); // Get the 5 most recent clients
-    
-        // Pass the data to the view
+        $totalClients = Client::count();
+        $recentClients = Client::latest()->take(5)->get();
+
         return view('admin.dashboardAdmin', compact('totalClients', 'recentClients'));
     }
+
+    // Formulaire upload PDF client
     public function showUploadForm($clientId)
     {
         $client = Client::findOrFail($clientId);
-        return view('admin.clients.upload', compact('client'));
+        $labels = [
+            'Factures' => 'Factures',
+            'Plan' => 'Plan',
+            'rapport_diagnostic' => 'Rapport Diagnostic',
+            'fiche_intervention' => 'Fiche d’intervention',
+            'attestation_traitement' => 'Attestation de traitement',
+            'evaluation_trimestrielle' => 'Évaluation trimestrielle',
+            'analyse_tendance_annuelle' => 'Analyse de tendance annuelle',
+            'attestation_hygiexpert5d' => 'Attestation Hygiexpert 5D',
+            'Dossier_technique_des_produits' => 'Dossier technique des produits',
+            "Rapport_d'intervention" => "Rapport d’intervention",
+        ];
+        return view('admin.clients.upload', compact('client', 'labels'));
     }
-    
 
+    // Upload fichiers PDF client
     public function upload(Request $request, $id)
 {
     $client = Client::findOrFail($id);
 
     $fields = [
-        'pdf_path', 'plan_path', 'rapport_diagnostic_path', 'fiche_intervention_path',
-        'attestation_traitement_path', 'evaluation_trimestrielle_path', 'analyse_tendance_annuelle_path',
-        'attestation_mygiexpert5d_path', 'autre1_path', 'autre2_path'
+        'Factures', 'Plan', 'rapport_diagnostic', 'fiche_intervention',
+        'attestation_traitement', 'evaluation_trimestrielle', 'analyse_tendance_annuelle',
+        'attestation_hygiexpert5d', 'Dossier_technique_des_produits', "Rapport_d'intervention"
     ];
 
+    // Validation : champs multiples (tableaux de fichiers)
     $rules = [];
     foreach ($fields as $field) {
-        $rules[$field] = 'nullable|file|mimes:pdf|max:10240';  // Validation optionnelle
+        $rules[$field] = 'nullable|array';
+        $rules["$field.*"] = 'file|mimes:pdf|max:102400'; // 100MB max par fichier
     }
-
     $request->validate($rules);
 
-    $uploaded = false;  // <-- Bien initialiser ici AVANT la boucle
+    $parser = new \Smalot\PdfParser\Parser();
+    $uploaded = false;
+    $errors = [];
 
     foreach ($fields as $field) {
         if ($request->hasFile($field)) {
-            $file = $request->file($field);
-            $path = $file->store('uploads/pdfs', 'public');
+            foreach ($request->file($field) as $file) {
+                try {
+                    $pdf = $parser->parseFile($file->getRealPath());
+                    $pages = $pdf->getDetails()['Pages'] ?? 0;
 
-            Document::create([
-                'client_id' => $client->id,
-                'type' => $field,
-                'path' => $path,
-            ]);
+                    if ($pages > 100) {
+                        $errors[] = "Le fichier '{$file->getClientOriginalName()}' dans '$field' contient $pages pages (max 100).";
+                        continue;
+                    }
+                } catch (\Exception $e) {
+                    $errors[] = "Impossible de lire le fichier '{$file->getClientOriginalName()}' dans '$field'.";
+                    continue;
+                }
 
-            $uploaded = true;  // On marque qu’au moins un fichier a été uploadé
+                // Construction du nom de fichier unique
+                $date = date('(d.m.Y)');
+                $baseName = strtolower($field) . ' ' . $date;
+                $extension = $file->getClientOriginalExtension();
+                $filename = $baseName . '.' . $extension;
+                $counter = 1;
+
+                while (\Storage::disk('public')->exists("uploads/pdfs/$filename")) {
+                    $filename = $baseName . " ($counter)." . $extension;
+                    $counter++;
+                }
+
+                // Stocker le fichier
+                $path = $file->storeAs('uploads/pdfs', $filename, 'public');
+
+                // Sauvegarder en base
+                Document::create([
+                    'client_id' => $client->id,
+                    'type' => $field,
+                    'path' => $path,
+                ]);
+
+                $uploaded = true;
+            }
         }
     }
 
+    if (!empty($errors)) {
+        return redirect()->back()->withErrors($errors);
+    }
+
     if ($uploaded) {
-        return redirect()->back()->with('success', 'Les fichiers ont été uploadés avec succès.');
+        return redirect()->back()->with('success', 'Fichiers uploadés avec succès.');
     } else {
         return redirect()->back()->with('error', 'Aucun fichier n’a été uploadé.');
     }
 }
 
+    // Suppression fichiers sélectionnés
+    public function deleteDocuments(Request $request, $clientId)
+    {
+        $client = Client::findOrFail($clientId);
 
+        $documentIds = $request->input('documents', []);
+
+        if (empty($documentIds)) {
+            return redirect()->back()->with('error', 'Aucun fichier sélectionné pour suppression.');
+        }
+
+        $documents = Document::whereIn('id', $documentIds)->where('client_id', $client->id)->get();
+
+        foreach ($documents as $doc) {
+            Storage::disk('public')->delete($doc->path);
+            $doc->delete();
+        }
+
+        return redirect()->back()->with('success', 'Fichiers supprimés avec succès.');
+    }
+
+    // Affichage fichiers filtrés par année
+    public function showClientPdfsByYear(Request $request, $clientId)
+    {
+        $client = Client::findOrFail($clientId);
     
+        $labels = [
+            'Factures' => 'Factures',
+            'Plan' => 'Plan',
+            'rapport_diagnostic' => 'Rapport Diagnostic',
+            'fiche_intervention' => 'Fiche d’intervention',
+            'attestation_traitement' => 'Attestation de traitement',
+            'evaluation_trimestrielle' => 'Évaluation trimestrielle',
+            'analyse_tendance_annuelle' => 'Analyse de tendance annuelle',
+            'attestation_hygiexpert5d' => 'Attestation Hygiexpert 5D',
+            'Dossier_technique_des_produits' => 'Dossier technique des produits',
+            "Rapport_d'intervention" => "Rapport d’intervention",
+        ];
+    
+        $documents = $client->documents;
+    
+        $years = $documents->map(function ($doc) {
+            return optional($doc->created_at)->format('Y');
+        })->filter()->unique()->sortDesc()->values();
+    
+        $months = $documents->map(function ($doc) {
+            return optional($doc->created_at)->format('m');
+        })->filter()->unique()->sort()->values();
+    
+        $year = $request->query('year', null);
+        $month = $request->query('month', null);
+    
+        if ($year) {
+            $documents = $documents->filter(fn($doc) => optional($doc->created_at)->format('Y') == $year);
+        }
+    
+        if ($month) {
+            $documents = $documents->filter(fn($doc) => optional($doc->created_at)->format('m') == $month);
+        }
+    
+        $documentsGrouped = $documents->groupBy('type');
+    
+        return view('admin.clients.showPdfsByYear', compact('client', 'documentsGrouped', 'labels', 'years', 'year', 'months', 'month'));
+    }
+
 }

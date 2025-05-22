@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', ' Uploader les fichiers PDF')
+@section('title', 'Uploader les fichiers PDF')
 
 @section('navbar')
     @include('admin.partials.navbar')
@@ -12,68 +12,64 @@
 
 @section('content')
 
-
-<div class="max-w-4xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-md shadow-md">
-    <h1 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-100">
-        Uploader les fichiers PDF pour le client <span class="font-bold">{{ $client->nom }} {{ $client->prenom }}</span>
+<div class="max-w-5xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-md shadow-md">
+    <h1 class="text-2xl font-semibold mb-8 text-gray-800 dark:text-gray-100 text-center">
+        Uploader les fichiers PDF pour <span class="font-bold text-green-600 ">{{ $client->nom }} {{ $client->prenom }}</span>
     </h1>
 
-    @if(session('success'))
-    <div class="mb-4 p-3 text-green-800 bg-green-100 rounded">
-        {{ session('success') }}
+    <div class="mb-6 text-end">
+        <a href="{{ route('admin.clients.showPdfsByYear', $client->id) }}" 
+           class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-800 text-white rounded shadow">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <rect width="20" height="5" x="2" y="3" rx="1"/>
+                <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/>
+                <path d="M10 12h4"/>
+            </svg>
+            Voir les fichiers
+        </a>
     </div>
-@endif
 
-@if(session('error'))
-    <div class="mb-4 p-3 text-red-800 bg-red-100 rounded">
-        {{ session('error') }}
-    </div>
-@endif
+    @if(session('success'))
+        <div class="mb-6 p-3 bg-green-100 text-green-800 rounded">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="mb-6 p-3 bg-red-100 text-red-800 rounded">
+            {{ session('error') }}
+        </div>
+    @endif
 
     @if ($errors->any())
-        <div class="mb-6 p-3 text-red-700 bg-red-100 rounded">
-            <ul class="list-disc list-inside">
+        <div class="mb-6 p-3 bg-red-100 text-red-800 rounded">
+            <ul class="list-disc pl-5">
                 @foreach ($errors->all() as $error)
-                    <li class="mb-1">{{ $error }}</li>
+                    <li>{{ $error }}</li>
                 @endforeach
             </ul>
         </div>
     @endif
 
-    <form action="{{ route('admin.clients.upload', $client->id) }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <form action="{{ route('admin.clients.upload', $client->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
+        <div class="grid grid-cols-2 gap-6">
+    @foreach ($labels as $key => $label)
+        <div class="flex flex-col">
+            <label for="{{ $key }}" class="mb-1 font-medium text-gray-700 dark:text-gray-300">{{ $label }}</label>
+            <input id="{{ $key }}" type="file" name="{{ $key }}[]" accept="application/pdf" multiple
+                class="border rounded px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+    @endforeach
+</div>
 
-        @php
-            $fields = [
-                'pdf_path' => 'PDF Principal',
-                'plan_path' => 'Plan',
-                'rapport_diagnostic_path' => 'Rapport Diagnostic',
-                'fiche_intervention_path' => 'Fiche Intervention',
-                'attestation_traitement_path' => 'Attestation Traitement',
-                'evaluation_trimestrielle_path' => 'Evaluation Trimestrielle',
-                'analyse_tendance_annuelle_path' => 'Analyse Tendance Annuelle',
-                'attestation_mygiexpert5d_path' => 'Attestation Mygiexpert 5D',
-                'autre1_path' => 'Autre 1',
-                'autre2_path' => 'Autre 2',
-            ];
-        @endphp
-
-        @foreach ($fields as $name => $label)
-            <div class="flex flex-col">
-                <label for="{{ $name }}" class="mb-2 font-medium text-gray-700 dark:text-gray-200">{{ $label }}</label>
-                <input id="{{ $name }}" type="file" name="{{ $name }}" accept="application/pdf"
-                    class="block w-full text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 rounded-md
-                    focus:border-indigo-500 focus:ring-indigo-500 dark:focus:border-indigo-400 dark:focus:ring-indigo-400
-                    file:bg-indigo-600 file:text-white file:px-3 file:py-1 file:rounded file:border-0 file:cursor-pointer" />
-            </div>
-        @endforeach
-
-        <div class="col-span-full">
-            <button type="submit"
-                class="w-full py-3 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition-colors duration-300">
-                Uploader
+        <div class="mt-8">
+            <button type="submit" 
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded font-semibold transition">
+                Uploader les fichiers
             </button>
         </div>
     </form>
 </div>
+
 @endsection

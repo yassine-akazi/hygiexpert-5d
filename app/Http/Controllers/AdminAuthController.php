@@ -46,22 +46,18 @@ class AdminAuthController extends Controller
     }
     public function dashboard()
     {
-        // Exemple pour compter le nombre de clients par mois
         $monthlyClientsCount = Client::selectRaw('COUNT(*) as count, MONTH(created_at) as month')
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
+        ->groupBy('month')
+        ->orderBy('month')
+        ->get();
     
-        $labels = $monthlyClientsCount->pluck('month')->map(function ($month) {
-            return date('M', mktime(0, 0, 0, $month, 10));
-        })->toArray();
+    $labels = $monthlyClientsCount->pluck('month')->map(function ($month) {
+        return date('M', mktime(0, 0, 0, $month, 10));
+    })->toArray();
     
-        $data = $monthlyClientsCount->pluck('count')->toArray();
+    $data = $monthlyClientsCount->pluck('count')->toArray();
     
-        // Tu peux aussi passer les clients pour la partie tableau ou autres
-        $clients = Client::all();
-    
-        return view('admin.dashboardAdmin', compact('labels', 'data', 'clients'));
+    return view('admin.dashboardAdmin', compact('labels', 'data'));
     }
     
 }

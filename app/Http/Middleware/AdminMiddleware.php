@@ -17,6 +17,7 @@ class AdminMiddleware
         if ($request->routeIs('admin.login')) {
             return $next($request);
         }
+        
     
         return redirect()->route('admin.login');
     }
