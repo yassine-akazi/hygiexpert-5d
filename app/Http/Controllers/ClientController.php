@@ -274,14 +274,33 @@ class ClientController extends Controller
     
         return view('admin.clients.showPdfsByYear', compact('client', 'documentsGrouped', 'labels', 'years', 'year', 'months', 'month'));
     }
-    public function logout(Request $request)
-{
-    Auth::guard('client')->logout(); // déconnecte le client
 
-    $request->session()->invalidate(); // invalide la session
-    $request->session()->regenerateToken(); // régénère le token CSRF
+    public function login(Request $request)
+    {
+        // Validation des champs
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+    
+        // Tentative d'authentification
+        if (Auth::guard('client')->attempt($credentials)) {
+            // Authentification réussie
+            $request->session()->regenerate();
+    
+            return redirect()->intended(route('client.dashboard')); // vers ton dashboard
+        }
+    
+        // Authentification échouée
+        return back()->withErrors([
+            'email' => 'Email ou mot de passe incorrect.',
+        ])->withInput();
+    }
+    public function showMyInfo()
+    {
+        $client = auth()->guard('client')->user();
+        return view('admin.clients.infos', compact('client'));
+    }
 
-    return redirect()->route('client.login.form'); // redirige vers la page de login
-}
 
 }

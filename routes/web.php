@@ -11,7 +11,11 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ClientDashboardController;
 use App\Http\Middleware\RedirectIfNotClient;
 use App\Http\Middleware\RedirectIfClientAuthenticated;
-;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Admin\ContactMessageController;
+
+
+
 
 
 
@@ -49,6 +53,11 @@ Route::middleware([AdminMiddleware::class])
 Route::get('/clients/{id}/pdfs', [ClientController::class, 'showClientPdfs'])->name('clients.showPdfs');
 Route::get('/clients/{id}/pdfs', [ClientController::class, 'showClientPdfsByYear'])
 ->name('clients.showPdfsByYear');
+Route::get('/contact-messages', [ContactMessageController::class, 'listMessages'])->name('contact_messages.index');
+        Route::delete('/contact-messages/delete', [ContactMessageController::class, 'deleteSelected'])->name('contact_messages.delete');
+
+
+
 
         
         
@@ -95,9 +104,14 @@ Route::middleware([RedirectIfClientAuthenticated::class])->name('client.')->grou
 Route::middleware([RedirectIfNotClient::class])->prefix('client')->name('client.')->group(function () {
     Route::get('/dashboard', [ClientDashboardController::class, 'index'])->name('dashboard');
     Route::post('/documents/download-zip', [ClientDashboardController::class, 'downloadSelectedZip'])->name('documents.downloadZip');
+    Route::get('/infos', [ClientController::class, 'showMyInfo'])->name('infos');
+    Route::get('/contact', [ContactController::class, 'show'])->name('contact');
+    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
 
     Route::get('/pdfs', [ClientDashboardController::class, 'showPdfs'])->name('pdfs');
     Route::post('/logout', [ClientAuthController::class, 'logout'])->name('logout');
+
 
 
 });
