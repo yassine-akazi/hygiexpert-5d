@@ -28,13 +28,13 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 shadow-sm flex justify-between items-center">
   <div class="flex items-center gap-3">
     <img src="{{ asset('images/logo.png') }}" class="h-10" alt="Logo" />
-    <span class="text-xl font-bold text-gray-800 dark:text-white">AdminPanel</span>
+    <span class="text-xl font-bold text-gray-800 dark:text-white"> </span>
   </div>
 
   <div class="flex items-center gap-4">
   <a href="{{ route('client.login.form') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition" > Mes fichiers </a>
 
-  <a href="{{ route('client.infos') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition">Votre information</a>
+  <a href="{{ route('client.infos') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition">Mes informations</a>
   <a href="{{ route('client.contact') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition">Contactez-nous</a>
     <!-- Toggle Dark Mode -->
     <button @click="darkMode = !darkMode" class="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Toggle dark mode">
@@ -61,7 +61,7 @@
 <main class="  p-6 flex-grow pt-20">
 
   <h2 class="text-3xl font-extrabold mb-8 text-gray-900 dark:text-white">
-    Fichiers PDF de <span class="text-indigo-600">{{ $client->nom }} {{ $client->prenom }}</span>
+  Les Documents  de <span class="text-indigo-600">{{ $client->nom_entreprise }}    </span>
   </h2>
 
   {{-- Filtre par année --}}
@@ -123,47 +123,41 @@
           Aucun fichier trouvé.
         </div>
       @else
-        <form id="download-form" method="GET" action="#" onsubmit="return false;" class="space-y-6">
-          <div class="flex items-center mb-6  ">
-            <input
-              type="checkbox"
-              id="select-all-global"
-              class="form-checkbox h-6 w-6 text-indigo-600 rounded cursor-pointer"
-            />
-            <label for="select-all-global" class=" pl-1 text-lg font-semibold text-gray-800 dark:text-gray-200 cursor-pointer">
-              Sélectionner tous les fichiers
-            </label>
+      <form id="download-form" method="POST" action="{{ route('client.documents.downloadZip') }}">
+      @csrf
+      <div class="flex items-center mb-6">
+        <input type="checkbox" id="select-all-global" class="form-checkbox h-6 w-6 text-indigo-600" />
+        <label for="select-all-global" class="ml-2 font-semibold">Sélectionner tous les fichiers</label>
+        <button type="submit" class="ml-auto flex items-center px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-1" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Télécharger ZIP
+        </button>
+      </div>
 
-            <button id="btnDownloadSelected" type="button" class="flex items-end
- ml-auto px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-semibold shadow">
- <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-down-icon lucide-file-down"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>              <span class="pl-1">  Télécharger </span>
-            </button>
-            
-          </div>
+      @foreach ($documentsGrouped as $type => $docs)
+      
+        <div class="files-group" data-type="{{ $type }}">
 
-          @foreach ($documentsGrouped as $type => $docs)
-            <div class="files-group" data-type="{{ $type }}" style="display:none;">
-              <h3 class="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">{{ $labels[$type] ?? ucfirst(str_replace('_', ' ', $type)) }}</h3>
+          <h3 class="text-lg font-semibold mb-3">{{ $labels[$type] ?? ucfirst(str_replace('_', ' ', $type)) }}</h3>
+          @foreach ($docs as $doc) 
+          <div class="mb-2 flex items-center bg-gray-50 dark:bg-gray-800 p-3 rounded shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition cursor-pointer">
+  <label for="doc_{{ $doc->id }}" class="flex items-center flex-1">
+    <input type="checkbox" id="doc_{{ $doc->id }}" name="documents[]" value="{{ asset('storage/' . $doc->path) }}" class="form-checkbox h-5 w-5" />
+    <span class="ml-3 truncate">{{ basename($doc->path) }}</span>
+  </label>
 
-              @foreach ($docs as $doc)
-                <div class="mb-2 flex items-center space-x-4 bg-gray-50 dark:bg-gray-800 p-3 rounded shadow-sm hover:shadow-md transition cursor-pointer group">
-                  <input type="checkbox" name="documents[]" value="{{ asset('storage/' . $doc->path) }}" id="doc_{{ $doc->id }}" class="form-checkbox h-5 w-5 rounded cursor-pointer type-checkbox-{{ $type }}" />
-                  
-                  <label for="doc_{{ $doc->id }}" class="flex-1 truncate text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 transition-colors">
-                    {{ basename($doc->path) }}
-                  </label>
+  <a href="{{ asset('storage/' . $doc->path) }}" target="_blank" class="text-blue-600 mr-4" title="Voir le PDF">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-icon lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+  </a>
 
-                  <a href="{{ asset('storage/' . $doc->path) }}" download title="Télécharger le PDF" class="text-green-500 hover:text-green-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
-                    </svg>
-                  </a>
-                </div>
-              @endforeach
-            </div>
+  <a href="{{ asset('storage/' . $doc->path) }}" download class="text-green-600" title="Télécharger">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+  </a>
+</div>
           @endforeach
-        </form>
+        </div>
+      @endforeach
+    </form>
       @endif
     </div>
 

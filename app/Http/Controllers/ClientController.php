@@ -121,12 +121,12 @@ class ClientController extends Controller
         $labels = [
             'Factures' => 'Factures',
             'Plan' => 'Plan',
-            'rapport_diagnostic' => 'Rapport Diagnostic',
+            'rapport_diagnostic' => 'Rapport de Diagnostic',
             'fiche_intervention' => 'Fiche d’intervention',
             'attestation_traitement' => 'Attestation de traitement',
             'evaluation_trimestrielle' => 'Évaluation trimestrielle',
-            'analyse_tendance_annuelle' => 'Analyse de tendance annuelle',
-            'attestation_hygiexpert5d' => 'Attestation Hygiexpert 5D',
+            'analyse_tendance_annuelle' => 'Analyse des tendances annuelle',
+            'attestation_hygiexpert5d' => 'Attestation HYGIEXPERT 5D',
             'Dossier_technique_des_produits' => 'Dossier technique des produits',
             "Rapport_d'intervention" => "Rapport d’intervention",
         ];
@@ -239,12 +239,12 @@ class ClientController extends Controller
         $labels = [
             'Factures' => 'Factures',
             'Plan' => 'Plan',
-            'rapport_diagnostic' => 'Rapport Diagnostic',
+            'rapport_diagnostic' => 'Rapport de Diagnostic',
             'fiche_intervention' => 'Fiche d’intervention',
             'attestation_traitement' => 'Attestation de traitement',
             'evaluation_trimestrielle' => 'Évaluation trimestrielle',
-            'analyse_tendance_annuelle' => 'Analyse de tendance annuelle',
-            'attestation_hygiexpert5d' => 'Attestation Hygiexpert 5D',
+            'analyse_tendance_annuelle' => 'Analyse des tendances annuelle',
+            'attestation_hygiexpert5d' => 'Attestation HYGIEXPERT 5D',
             'Dossier_technique_des_produits' => 'Dossier technique des produits',
             "Rapport_d'intervention" => "Rapport d’intervention",
         ];

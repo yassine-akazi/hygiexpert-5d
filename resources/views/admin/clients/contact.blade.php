@@ -22,12 +22,11 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 shadow-sm flex justify-between items-center">
   <div class="flex items-center gap-3">
     <img src="{{ asset('images/logo.png') }}" class="h-10" alt="Logo" />
-    <span class="text-xl font-bold text-gray-800 dark:text-white">AdminPanel</span>
   </div>
 
   <div class="flex items-center gap-4">
     <a href="{{ route('client.login.form') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition">Mes fichiers</a>
-    <a href="{{ route('client.infos') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition">Votre information</a>
+    <a href="{{ route('client.infos') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition">Mes informations</a>
     <a href="{{ route('client.contact') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition">Contactez-nous</a>
     
     <!-- Toggle Dark Mode -->
@@ -56,14 +55,14 @@
 <div class="container mx-auto mt-24 p-6">
 
 
+
+  <form method="POST" action="{{ route('client.contact.store') }}" class="max-w-lg mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow space-y-6">
+  @csrf
   @if(session('success'))
   <div class="bg-green-100 border border-green-400 text-green-800 p-4 rounded mb-4 shadow">
     {{ session('success') }}
   </div>
   @endif
-  <form method="POST" action="{{ route('client.contact.store') }}" class="max-w-lg mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow space-y-6">
-  @csrf
-
   <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Contactez-nous</h2>
 
   <div>

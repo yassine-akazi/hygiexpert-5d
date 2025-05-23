@@ -92,8 +92,8 @@ Route::post('/clients/{id}/upload', [ClientController::class, 'upload'])
 
 
 Route::middleware([RedirectIfClientAuthenticated::class])->name('client.')->group(function () {
-    Route::get('/login', [ClientAuthController::class, 'showLoginForm'])->name('login.form');
-    Route::post('/login', [ClientAuthController::class, 'login'])->name('login');
+    Route::get('/', [ClientAuthController::class, 'showLoginForm'])->name('login.form');
+    Route::post('/', [ClientAuthController::class, 'login'])->name('login');
 
 });
 
@@ -103,8 +103,9 @@ Route::middleware([RedirectIfClientAuthenticated::class])->name('client.')->grou
 
 Route::middleware([RedirectIfNotClient::class])->prefix('client')->name('client.')->group(function () {
     Route::get('/dashboard', [ClientDashboardController::class, 'index'])->name('dashboard');
-    Route::post('/documents/download-zip', [ClientDashboardController::class, 'downloadSelectedZip'])->name('documents.downloadZip');
-    Route::get('/infos', [ClientController::class, 'showMyInfo'])->name('infos');
+    Route::post('/client/documents/download-zip', [ClientDashboardController::class, 'downloadSelectedZip'])
+    ->name('documents.downloadZip');
+     Route::get('/infos', [ClientController::class, 'showMyInfo'])->name('infos');
     Route::get('/contact', [ContactController::class, 'show'])->name('contact');
     Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 

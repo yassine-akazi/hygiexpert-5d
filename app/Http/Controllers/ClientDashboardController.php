@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Client;
+use ZipArchive;
 
 class ClientDashboardController extends Controller
 {
@@ -58,12 +59,12 @@ class ClientDashboardController extends Controller
         $labels = [
             'factures' => 'Factures',
             'plan' => 'Plan',
-            'rapport_diagnostic' => 'Rapport Diagnostic',
+            'rapport_diagnostic' => 'Rapport de Diagnostic',
             'fiche_intervention' => 'Fiche d’intervention',
             'attestation_traitement' => 'Attestation de traitement',
             'evaluation_trimestrielle' => 'Évaluation trimestrielle',
-            'analyse_tendance_annuelle' => 'Analyse de tendance annuelle',
-            'attestation_hygiexpert5d' => 'Attestation Hygiexpert 5D',
+            'analyse_tendance_annuelle' => 'Analyse des tendances annuelle',
+            'attestation_hygiexpert5d' => 'Attestation HYGIEXPERT 5D',
             'dossier_technique_des_produits' => 'Dossier technique des produits',
             // Ajoutez vos autres types ici
         ];
@@ -79,32 +80,31 @@ class ClientDashboardController extends Controller
         ));
     }
 
+   
+
     public function downloadSelectedZip(Request $request)
     {
-        $paths = $request->input('documents');
+        $documents = $request->input('documents', []);
     
-        if (!$paths || !is_array($paths)) {
-            return back()->with('error', 'Aucun fichier sélectionné.');
+        if (empty($documents)) {
+            return redirect()->back()->with('error', 'Aucun fichier sélectionné.');
         }
     
-        $zipFileName = 'documents_' . now()->format('Ymd_His') . '.zip';
-        $zipPath = storage_path("app/public/temp/{$zipFileName}");
-    
-        if (!file_exists(dirname($zipPath))) {
-            mkdir(dirname($zipPath), 0755, true);
-        }
+        $zipFileName = 'documents_selectionnes.zip';
+        $zipPath = storage_path("app/public/{$zipFileName}");
     
         $zip = new ZipArchive;
-        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-            foreach ($paths as $relativePath) {
-                $fullPath = storage_path('app/public/' . $relativePath);
+    
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+            foreach ($documents as $docUrl) {
+                $relativePath = str_replace(asset('storage') . '/', '', $docUrl);
+                $fullPath = storage_path("app/public/{$relativePath}");
+    
                 if (file_exists($fullPath)) {
                     $zip->addFile($fullPath, basename($fullPath));
                 }
             }
             $zip->close();
-        } else {
-            return back()->with('error', 'Impossible de créer le fichier ZIP.');
         }
     
         return response()->download($zipPath)->deleteFileAfterSend(true);

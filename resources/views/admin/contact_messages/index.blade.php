@@ -81,7 +81,7 @@
         </td>
         <td class="px-6 py-4 font-medium">{{ $msg->name }}</td>
         <td class="px-6 py-4">{{ $msg->email }}</td>
-        <td class="px-6 py-4">{{ Str::limit($msg->message, 80) }}</td>
+        <td class="px-6 py-4">{{ $msg->message }}</td>
         <td class="px-6 py-4">{{ $msg->created_at->format('d/m/Y H:i') }}</td>
       </tr>
       @empty
