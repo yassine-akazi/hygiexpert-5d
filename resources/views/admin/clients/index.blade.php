@@ -20,132 +20,114 @@
 <div class="p-6 bg-white dark:bg-gray-900 rounded shadow">
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-bold text-gray-800 dark:text-white">Liste des clients</h2>
-        <a href="{{ route('admin.clients.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-plus-icon lucide-user-round-plus"><path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/><path d="M19 16v6"/><path d="M22 19h-6"/></svg>        </a>
+        <a href="{{ route('admin.clients.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded" title="Ajouter un client">
+            <!-- icône ajout -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-plus-icon lucide-user-round-plus"><path d="M2 21a8 8 0 0 1 13.292-6"/><circle cx="10" cy="8" r="5"/><path d="M19 16v6"/><path d="M22 19h-6"/></svg>
+        </a>
     </div>
 
     <!-- Formulaire de filtre -->
     <form method="GET" action="{{ route('admin.clients') }}" class="mb-6 flex gap-4">
-    <input type="text" name="search" value="{{ request('search') }}" placeholder="Rechercher un client..." class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white w-full" />
-    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
-    </button>
-</form>
-</form>
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="Rechercher un client..." class="px-4 py-2 border rounded dark:bg-gray-800 dark:text-white w-full" />
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" title="Rechercher">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </button>
+    </form>
+
     <!-- Tableau -->
     <div class="overflow-x-auto">
         <table class="min-w-full text-sm text-left text-gray-700 dark:text-gray-300">
             <thead class="text-xs bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-white uppercase">
                 <tr>
                     <th class="px-6 py-3">Nom et Prénom</th>
-                    <th class="px-6 py-3">ICE </th>
+                    <th class="px-6 py-3">ICE</th>
                     <th class="px-6 py-3">Entreprise</th>
                     <th class="px-6 py-3">Téléphone</th>
                     <th class="px-6 py-3">Email</th>
                     <th class="px-6 py-3">Adresse</th>
-
                     <th class="px-6 py-3 text-right">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($clients as $client)
                     <tr class="bg-white dark:bg-gray-900 border-b dark:border-gray-700">
-                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $client->nom }} <p> </p> {{ $client->prenom }}</td>
+                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $client->nom }} {{ $client->prenom }}</td>
                         <td class="px-6 py-4">{{ $client->ice }}</td>
                         <td class="px-6 py-4">{{ $client->nom_entreprise }}</td>
                         <td class="px-6 py-4">{{ $client->phone }}</td>
                         <td class="px-6 py-4">{{ $client->email }}</td>
-                        <td class="px-6 py-4 ">{{ $client->adresse }}</td>
-
+                        <td class="px-6 py-4">{{ $client->adresse }}</td>
                         <td class="px-6 py-4 text-right space-x-4 flex items-center justify-end">
-    <!-- Editer (bleu) -->
-    <a href="{{ route('admin.clients.edit', $client->id) }}" class="text-blue-600 hover:underline">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-pen-icon">
-            <path d="M2 21a8 8 0 0 1 10.821-7.487"/>
-            <path d="M21.378 16.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/>
-            <circle cx="10" cy="8" r="5"/>
-        </svg>
-    </a>
+                            <!-- Editer (bleu) -->
+                            <a href="{{ route('admin.clients.edit', $client->id) }}" class="text-blue-600 hover:underline" title="Éditer">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-pen-icon">
+                                    <path d="M2 21a8 8 0 0 1 10.821-7.487"/>
+                                    <path d="M21.378 16.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/>
+                                    <circle cx="10" cy="8" r="5"/>
+                                </svg>
+                            </a>
 
-    <!-- Supprimer (rouge) -->
-    <form id="delete-form-{{ $client->id }}" action="{{ route('admin.clients.destroy', $client->id) }}" method="POST" class="inline-block">
-                @csrf
-                @method('DELETE')
-                <button type="button" onclick="openConfirmModal({{ $client->id }})" class="text-red-600 hover:underline flex items-center space-x-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                        <circle cx="9" cy="7" r="4"/>
-                        <line x1="22" x2="16" y1="11" y2="11"/>
-                    </svg>
-                   
-                </button>
-            </form>
+                            <!-- Supprimer (rouge) -->
+                            <form id="delete-form-{{ $client->id }}" action="{{ route('admin.clients.destroy', $client->id) }}" method="POST" class="inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" onclick="confirmDelete({{ $client->id }})" class="text-red-600 hover:underline flex items-center space-x-1" title="Supprimer">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <line x1="22" x2="16" y1="11" y2="11"/>
+                                    </svg>
+                                </button>
+                            </form>
 
-    <!-- Ajouter (vert) -->
-    
-    <a href=" {{ route('admin.clients.upload.form', $client->id) }}" class="text-green-600 hover:underline">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-plus-icon">
-            <path d="M12 10v6"/>
-            <path d="M9 13h6"/>
-            <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
-        </svg>
-    </a>
-    <a href="{{ route('admin.clients.showPdfsByYear', $client->id) }}" class="text-purple-600 hover:text-purple-800" title="Voir les fichiers PDF">
-    <!-- Icône œil -->
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-archive-icon lucide-archive"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg></a>
+                            <!-- Ajouter (vert) -->
+                            <a href="{{ route('admin.clients.upload.form', $client->id) }}" class="text-green-600 hover:underline" title="Ajouter un fichier">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-plus-icon">
+                                    <path d="M12 10v6"/>
+                                    <path d="M9 13h6"/>
+                                    <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>
+                                </svg>
+                            </a>
 
-</td>
+                            <!-- Voir PDF (violet) -->
+                            <a href="{{ route('admin.clients.showPdfsByYear', $client->id) }}" class="text-purple-600 hover:text-purple-800" title="Voir les fichiers PDF">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-archive-icon">
+                                    <rect width="20" height="5" x="2" y="3" rx="1"/>
+                                    <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/>
+                                    <path d="M10 12h4"/>
+                                </svg>
+                            </a>
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">Aucun client trouvé.</td>
+                        <td colspan="7" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">Aucun client trouvé.</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
-<!-- MODALE DE CONFIRMATION -->
-<div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
-        <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Confirmation de suppression</h2>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">Es-tu sûr de vouloir supprimer ce client ? Cette action est irréversible.</p>
-        <div class="flex justify-end space-x-3">
-            <button onclick="closeConfirmModal()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-                Annuler
-            </button>
-            <button id="confirmDeleteBtn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-700">
-                Supprimer
-            </button>
-        </div>
-    </div>
 </div>
 
-
+{{-- Intégration SweetAlert2 --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    if (document.getElementById("search-table") && typeof simpleDatatables.DataTable !== 'undefined') {
-    const dataTable = new simpleDatatables.DataTable("#search-table", {
-        searchable: true,
-        sortable: false
+function confirmDelete(clientId) {
+    Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: "Cette action est irréversible !",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Oui, supprimer',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('delete-form-' + clientId).submit();
+        }
     });
 }
-
-let currentFormId = null;
-
-function openConfirmModal(clientId) {
-    currentFormId = `delete-form-${clientId}`;
-    document.getElementById('confirmModal').classList.remove('hidden');
-}
-
-function closeConfirmModal() {
-    document.getElementById('confirmModal').classList.add('hidden');
-    currentFormId = null;
-}
-
-document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
-    if (currentFormId) {
-        document.getElementById(currentFormId).submit();
-    }
-});
 </script>
 @endsection

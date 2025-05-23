@@ -90,7 +90,7 @@
         <label for="remember" class="ml-2 text-sm text-gray-600">Se souvenir de moi</label>
       </div>
 
-      <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-md text-lg font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      <button type="submit" class="w-full bg-blue-400 text-white py-3 rounded-md text-lg font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
         Se connecter
       </button>
     </form>

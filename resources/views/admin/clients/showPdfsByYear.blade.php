@@ -12,24 +12,18 @@
 
 @section('content')
 
-
 <h2 class="text-3xl font-extrabold mb-8 text-gray-900 dark:text-white">
     Fichiers PDF de <span class="text-indigo-600">{{ $client->nom }} {{ $client->prenom }}</span>
 </h2>
 
-
-
 {{-- Filtre par année --}}
 @if($years->count())
     <div class="mb-6 flex flex-wrap gap-3">
-        {{-- Bouton Tous --}}
         <a href="{{ route('admin.clients.showPdfsByYear', ['id' => $client->id]) }}"
            class="px-3 py-2 rounded-full text-sm font-semibold transition
                {{ !$year ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-indigo-500 hover:text-white' }}">
             Tous
         </a>
-
-        {{-- Liste des années --}}
         @foreach($years as $y)
             <a href="{{ route('admin.clients.showPdfsByYear', ['id' => $client->id, 'year' => $y]) }}"
                class="px-3 py-2 rounded-full text-sm font-semibold transition
@@ -40,7 +34,7 @@
     </div>
 @endif
 
-{{-- Filtre par mois si une année est sélectionnée --}}
+{{-- Filtre par mois --}}
 @if($year && $months->count())
     <div class="mb-8 flex flex-wrap gap-3">
         @foreach($months as $m)
@@ -54,7 +48,6 @@
 @endif
 
 <div class="flex flex-col md:flex-row gap-6">
-
 
     {{-- Sidebar : Types --}}
     <div class="md:w-1/4 bg-gray-100 dark:bg-gray-800 rounded p-4 shadow">
@@ -77,11 +70,11 @@
 
     {{-- Contenu : fichiers --}}
     <div class="md:w-3/4">
-    @if(session('success'))
-        <div class="mb-6 p-3 bg-green-100 text-green-800 rounded">
-            {{ session('success') }}
-        </div>
-    @endif
+        @if(session('success'))
+            <div class="mb-6 p-3 bg-green-100 text-green-800 rounded">
+                {{ session('success') }}
+            </div>
+        @endif
         <form id="delete-form" action="{{ route('admin.clients.deleteDocuments', $client->id) }}" method="POST" class="space-y-6">
             @csrf
             @method('DELETE')
@@ -152,7 +145,6 @@
                                 <span>Sélectionner tous ({{ $docs->count() }})</span>
                             </label>
                         </div>
-        
 
                         @foreach ($docs as $doc)
                             <div class="mb-1 flex items-center space-x-4 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
@@ -174,40 +166,24 @@
                     </div>
                 @endforeach
                 @if($documentsGrouped->isEmpty())
-    <div class="text-center py-20 text-gray-500 dark:text-gray-400 text-lg font-medium">
-        Aucun fichier trouvé.
-    </div>
-@else
-    <!-- Ton formulaire et affichage des fichiers -->
-@endif
+                    <div class="text-center py-20 text-gray-500 dark:text-gray-400 text-lg font-medium">
+                        Aucun fichier trouvé.
+                    </div>
+                @endif
             </div>
             
         </form>
-
     </div>
 </div>
 
-{{-- Modal suppression --}}
-<div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
-        <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Confirmation de suppression</h2>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">Es-tu sûr de vouloir supprimer les fichiers sélectionnés ? Cette action est irréversible.</p>
-        <div class="flex justify-end space-x-3">
-            <button id="btnCancel" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Annuler</button>
-            <button id="confirmDeleteBtn" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-700">Supprimer</button>
-        </div>
-    </div>
-</div>
+{{-- SweetAlert2 --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('confirmModal');
     const btnOpenConfirm = document.getElementById('btnOpenConfirm');
-    const btnCancel = document.getElementById('btnCancel');
-    const btnConfirmDelete = document.getElementById('confirmDeleteBtn');
     const form = document.getElementById('delete-form');
     const selectAllGlobal = document.getElementById('select-all-global');
-    const typeButtons = document.querySelectorAll('.type-btn');
     const filesGroups = document.querySelectorAll('.files-group');
 
     // Affiche tous les fichiers au départ
@@ -223,9 +199,9 @@ document.addEventListener('DOMContentLoaded', function() {
     showFilesByType('all');
 
     // Gestion des boutons de filtre par type
-    typeButtons.forEach(btn => {
+    document.querySelectorAll('.type-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            typeButtons.forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg'));
+            document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg'));
             btn.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
             const type = btn.dataset.type || btn.getAttribute('data-type');
             showFilesByType(type || 'all');
@@ -269,6 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const allChecked = Array.from(form.querySelectorAll('input[name="documents[]"]')).every(cb => cb.checked);
             selectAllGlobal.checked = allChecked;
 
+            // Vérifier par type
             const types = [...new Set(Array.from(form.querySelectorAll('input[name="documents[]"]')).map(cb => {
                 const match = cb.className.match(/type-checkbox-([^ ]+)/);
                 return match ? match[1] : null;
@@ -283,28 +260,33 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Modale de confirmation suppression
-    function openConfirmModal() {
-        modal.classList.remove('hidden');
-    }
-
-    function closeConfirmModal() {
-        modal.classList.add('hidden');
-    }
-
+    // Confirmation suppression avec SweetAlert2
     btnOpenConfirm.addEventListener('click', function() {
-        const anyChecked = Array.from(form.querySelectorAll('input[name="documents[]"]')).some(cb => cb.checked);
-        if (!anyChecked) {
-           
+        const checkedCount = Array.from(form.querySelectorAll('input[name="documents[]"]:checked')).length;
+
+        if (checkedCount === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Aucun fichier sélectionné',
+                text: 'Veuillez sélectionner au moins un fichier à supprimer.',
+            });
             return;
         }
-        openConfirmModal();
-    });
 
-    btnCancel.addEventListener('click', closeConfirmModal);
-
-    btnConfirmDelete.addEventListener('click', function() {
-        form.submit();
+        Swal.fire({
+            title: 'Êtes-vous sûr ?',
+            text: `Vous allez supprimer ${checkedCount} fichier(s). Cette action est irréversible !`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Oui, supprimer',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
     });
 });
 </script>

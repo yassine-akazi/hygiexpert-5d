@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Admin Dashboard')
+@section('title', 'Dashboard Admin')
 
 @section('navbar')
     @include('admin.partials.navbar')
@@ -12,85 +12,87 @@
 
 @section('content')
 <div class="p-6 space-y-6">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard Admin</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Suivi et analyses des clients</p>
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard Admin</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Vue d'ensemble et statistiques des clients</p>
     </div>
 
-    <!-- Cards Section -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Total Clients -->
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-md">
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-xl text-gray-500 dark:text-gray-400">Total Clients</p>
-                    <h2 class="text-[100px] font-bold text-indigo-600 dark:text-white">{{ $totalClients }}</h2>
-                </div>
+    <!-- Statistiques Rapides -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow flex items-center gap-4">
+            <div class="p-3 bg-indigo-100 dark:bg-indigo-900 rounded-full">
+                <!-- Icône -->
+            </div>
+            <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Total Clients</p>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalClients }}</h2>
             </div>
         </div>
+        <!-- Ajoutez d'autres cartes de statistiques si nécessaire -->
+    </div>
 
-        <!-- Recent Clients -->
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-md col-span-1 sm:col-span-2 lg:col-span-1">
-            <p class="text-xl text-gray-500 dark:text-gray-400 mb-2">Clients récents</p>
-            <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-300">
+    <!-- Clients récents et graphique -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Clients récents -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow">
+            <h3 class="text-lg font-bold text-gray-700 dark:text-gray-200 mb-4">Clients récents</h3>
+            <ul class="divide-y divide-gray-200 dark:divide-gray-700">
                 @foreach ($recentClients as $client)
-                    <li class="flex justify-between">
-                        <span>{{ $client->nom }}</span>
-                        <span class="text-gray-400">{{ $client->email }}</span>
+                    <li class="py-3 flex justify-between items-center">
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $client->nom }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $client->email }}</p>
+                        </div>
                     </li>
                 @endforeach
             </ul>
         </div>
 
-        
-
-
-        <!-- Line Chart -->
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-              <h3 class="text-xl font-medium text-gray-700 dark:text-gray-300 mb-4">Croissance des clients</h3>
-              <div class="h-60">
-                  <canvas id="clientGrowthChart"></canvas>
-              </div>
-          </div>
-  
+        <!-- Graphique -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow">
+            <h3 class="text-lg font-bold text-gray-700 dark:text-gray-200 mb-4">Évolution des clients</h3>
+            <canvas id="clientGrowthChart" height="180"></canvas>
+        </div>
+    </div>
 </div>
 
-<!-- Chart.js Script -->
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const ctx = document.getElementById('clientGrowthChart').getContext('2d');
-
-// Exemple de données, à remplacer par des données dynamiques venant du serveur
-const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-const data = {
-    labels: labels,
-    datasets: [{
-        label: 'Nombre de clients',
-        data: [12, 19, 3, 5, 2, 7], // données à remplacer
-        fill: false,
-        borderColor: 'rgb(99, 102, 241)', // indigo-600 en Tailwind
-        tension: 0.1
-    }]
-};
-
-const config = {
+const ctx = document.getElementById('clientGrowthChart').getContext('2d');
+const clientGrowthChart = new Chart(ctx, {
     type: 'line',
-    data: data,
+    data: {
+        labels: {!! json_encode($months) !!},
+        datasets: [{
+            label: 'Inscriptions',
+            data: {!! json_encode($clientCounts) !!},
+            borderColor: 'rgb(99, 102, 241)',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            tension: 0.3,
+            fill: true,
+            pointBackgroundColor: 'rgb(99, 102, 241)'
+        }]
+    },
     options: {
         responsive: true,
+        plugins: {
+            legend: {
+                labels: { color: '#ffffff' }
+            }
+        },
         scales: {
+            x: {
+                ticks: { color: '#ccc' },
+                grid: { color: '#444' }
+            },
             y: {
                 beginAtZero: true,
-                ticks: {
-                    stepSize: 1
-                }
+                ticks: { color: '#ccc' },
+                grid: { color: '#444' }
             }
         }
     }
-};
-
-const clientGrowthChart = new Chart(ctx, config);
-
+});
 </script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 @endsection

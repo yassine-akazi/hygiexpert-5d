@@ -18,6 +18,9 @@
   <!-- Alpine.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
+  <!-- SweetAlert2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
     html { transition: background-color 0.3s, color 0.3s; }
   </style>
@@ -33,7 +36,6 @@
 
   <div class="flex items-center gap-4">
   <a href="{{ route('client.login.form') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition" > Mes fichiers </a>
-
   <a href="{{ route('client.infos') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition">Mes informations</a>
   <a href="{{ route('client.contact') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold transition">Contactez-nous</a>
     <!-- Toggle Dark Mode -->
@@ -58,10 +60,10 @@
   </div>
 </nav>
 
-<main class="  p-6 flex-grow pt-20">
+<main class="p-6 flex-grow pt-20">
 
   <h2 class="text-3xl font-extrabold mb-8 text-gray-900 dark:text-white">
-  Les Documents  de <span class="text-indigo-600">{{ $client->nom_entreprise }}    </span>
+  Les Documents  de <span class="text-indigo-600">{{ $client->nom_entreprise }}</span>
   </h2>
 
   {{-- Filtre par année --}}
@@ -128,36 +130,34 @@
       <div class="flex items-center mb-6">
         <input type="checkbox" id="select-all-global" class="form-checkbox h-6 w-6 text-indigo-600" />
         <label for="select-all-global" class="ml-2 font-semibold">Sélectionner tous les fichiers</label>
-        <button type="submit" class="ml-auto flex items-center px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700">
+        <button id="btnDownloadZip" type="button" class="ml-auto flex items-center px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-1" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Télécharger ZIP
         </button>
       </div>
 
       @foreach ($documentsGrouped as $type => $docs)
-      
         <div class="files-group" data-type="{{ $type }}">
-
           <h3 class="text-lg font-semibold mb-3">{{ $labels[$type] ?? ucfirst(str_replace('_', ' ', $type)) }}</h3>
           @foreach ($docs as $doc) 
           <div class="mb-2 flex items-center bg-gray-50 dark:bg-gray-800 p-3 rounded shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition cursor-pointer">
-  <label for="doc_{{ $doc->id }}" class="flex items-center flex-1">
-    <input type="checkbox" id="doc_{{ $doc->id }}" name="documents[]" value="{{ asset('storage/' . $doc->path) }}" class="form-checkbox h-5 w-5" />
-    <span class="ml-3 truncate">{{ basename($doc->path) }}</span>
-  </label>
+            <label for="doc_{{ $doc->id }}" class="flex items-center flex-1 cursor-pointer">
+              <input type="checkbox" id="doc_{{ $doc->id }}" name="documents[]" value="{{ asset('storage/' . $doc->path) }}" class="form-checkbox h-5 w-5" />
+              <span class="ml-3 truncate">{{ basename($doc->path) }}</span>
+            </label>
 
-  <a href="{{ asset('storage/' . $doc->path) }}" target="_blank" class="text-blue-600 mr-4" title="Voir le PDF">
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-icon lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
-  </a>
+            <a href="{{ asset('storage/' . $doc->path) }}" target="_blank" class="text-blue-600 mr-4" title="Voir le PDF">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-icon lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+            </a>
 
-  <a href="{{ asset('storage/' . $doc->path) }}" download class="text-green-600" title="Télécharger">
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
-  </a>
-</div>
+            <a href="{{ asset('storage/' . $doc->path) }}" download class="text-green-600" title="Télécharger">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+            </a>
+          </div>
           @endforeach
         </div>
       @endforeach
-    </form>
+      </form>
       @endif
     </div>
 
@@ -169,8 +169,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const selectAllGlobal = document.getElementById('select-all-global');
   const typeButtons = document.querySelectorAll('.type-btn');
   const filesGroups = document.querySelectorAll('.files-group');
-  const btnDownloadSelected = document.getElementById('btnDownloadSelected');
+  const btnDownloadZip = document.getElementById('btnDownloadZip');
+  const form = document.getElementById('download-form');
 
+  // Affiche tous les fichiers au départ
   function showFilesByType(type) {
     if (type === 'all') {
       filesGroups.forEach(group => group.style.display = 'block');
@@ -182,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   showFilesByType('all');
 
+  // Gestion des boutons de filtre par type
   typeButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       typeButtons.forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg'));
@@ -194,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Checkbox globale "Tout sélectionner"
   selectAllGlobal.addEventListener('change', function () {
     const checked = this.checked;
     filesGroups.forEach(group => {
@@ -203,20 +207,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  btnDownloadSelected.addEventListener('click', () => {
-    const checkedBoxes = document.querySelectorAll('input[name="documents[]"]:checked');
+  // Gestion du clic sur Télécharger ZIP avec SweetAlert2
+  btnDownloadZip.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const checkedBoxes = form.querySelectorAll('input[name="documents[]"]:checked');
     if (checkedBoxes.length === 0) {
-      alert('Veuillez sélectionner au moins un fichier.');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Aucun fichier sélectionné',
+        confirmButtonColor: 'gray',
+        text: 'Veuillez sélectionner au moins un fichier à télécharger.',
+      });
       return;
     }
-    checkedBoxes.forEach(checkbox => {
-      const url = checkbox.value;
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = url.split('/').pop();
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+
+    Swal.fire({
+      title: `Télécharger ${checkedBoxes.length} fichier(s) ?`,
+      text: "Voulez-vous vraiment télécharger les fichiers sélectionnés en ZIP ?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: 'green',
+      confirmButtonText: 'Oui, télécharger',
+      cancelButtonText: 'Annuler',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        form.submit();
+      }
     });
   });
 });

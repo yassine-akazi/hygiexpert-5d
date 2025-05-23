@@ -64,13 +64,7 @@ Route::get('/contact-messages', [ContactMessageController::class, 'listMessages'
 
 
     // Dashboard
-    Route::get('/dashboard', function () {
-        $totalClients = Client::count();
-
-        $recentClients = Client::orderBy('created_at', 'desc')->take(5)->get(); // 5 clients récents
-
-        return view('admin.dashboardAdmin', compact('totalClients', 'recentClients'));
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminAuthController::class, 'dashboard'])->name('dashboard');
 
     // Clients
     Route::get('/clients', [ClientController::class, 'index'])->name('clients');

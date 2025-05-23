@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Client;
+use Carbon\Carbon;
 
 class AdminAuthController extends Controller
 {
@@ -15,7 +16,7 @@ class AdminAuthController extends Controller
         if (Auth::check() && Auth::user()->role === 'admin') {
             return redirect()->route('admin.dashboard');
         }
-    
+
         return view('admin.login');
     }
 
@@ -44,20 +45,29 @@ class AdminAuthController extends Controller
 
         return redirect()->route('admin.login');
     }
+
     public function dashboard()
     {
-        $monthlyClientsCount = Client::selectRaw('COUNT(*) as count, MONTH(created_at) as month')
-        ->groupBy('month')
-        ->orderBy('month')
-        ->get();
-    
-    $labels = $monthlyClientsCount->pluck('month')->map(function ($month) {
-        return date('M', mktime(0, 0, 0, $month, 10));
-    })->toArray();
-    
-    $data = $monthlyClientsCount->pluck('count')->toArray();
-    
-    return view('admin.dashboardAdmin', compact('labels', 'data'));
+        $totalClients = Client::count();
+        $recentClients = Client::latest()->take(5)->get();
+
+        // Localisation en français pour les noms de mois
+        setlocale(LC_TIME, 'fr_FR.UTF-8');
+        Carbon::setLocale('fr');
+
+        $months = [];
+        $clientCounts = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $carbonDate = Carbon::now()->subMonths($i);
+            $month = ucfirst($carbonDate->translatedFormat('F'));
+            $count = Client::whereMonth('created_at', $carbonDate->month)
+                           ->whereYear('created_at', $carbonDate->year)
+                           ->count();
+            $months[] = $month;
+            $clientCounts[] = $count;
+        }
+
+        return view('admin.dashboardAdmin', compact('totalClients', 'recentClients', 'months', 'clientCounts'));
     }
-    
 }
