@@ -26,8 +26,12 @@ class ClientAuthController extends Controller
     
     public function logout(Request $request)
     {
-        Auth::guard('client')->logout();
+        // Mettre à jour la colonne last_seen à null
+        if (auth('client')->check()) {
+            \App\Models\Client::where('id', auth('client')->id())->update(['last_seen' => null]);
+        }
     
+        Auth::guard('client')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
     

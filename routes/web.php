@@ -117,4 +117,7 @@ Route::get('/test-middleware', function () {
     return 'Middleware instancié avec succès : ' . get_class($middleware);
 });
 
+Route::middleware(['auth:client', 'updateLastSeen'])->prefix('client')->name('client.')->group(function () {
+    // tes routes client ici
+});
 

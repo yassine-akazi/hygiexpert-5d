@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Client;
 use Carbon\Carbon;
+use App\Models\Document;
+use App\Models\ContactMessage;
+
+
 
 class AdminAuthController extends Controller
 {
@@ -49,25 +53,22 @@ class AdminAuthController extends Controller
     public function dashboard()
     {
         $totalClients = Client::count();
-        $recentClients = Client::latest()->take(5)->get();
+        $totalMessages = ContactMessage::count();
+        $clientsOnline = Client::where('last_seen', '>=', now()->subMinutes(5))->count();
+                $totalDocuments = Document::count(); // <-- Ajouté ici
 
-        // Localisation en français pour les noms de mois
-        setlocale(LC_TIME, 'fr_FR.UTF-8');
-        Carbon::setLocale('fr');
+        $recentClients = Client::orderBy('created_at', 'desc')->take(5)->get();
 
+        // Pour le graphique (optionnel)
         $months = [];
         $clientCounts = [];
-
-        for ($i = 5; $i >= 0; $i--) {
-            $carbonDate = Carbon::now()->subMonths($i);
-            $month = ucfirst($carbonDate->translatedFormat('F'));
-            $count = Client::whereMonth('created_at', $carbonDate->month)
-                           ->whereYear('created_at', $carbonDate->year)
-                           ->count();
-            $months[] = $month;
-            $clientCounts[] = $count;
+        for ($i = 5;  $i >= 0; $i--) {
+            $months[] = Carbon::now()->subMonths($i)->format('F');
+            $clientCounts[] = Client::whereMonth('created_at', Carbon::now()->subMonths($i)->month)
+                ->whereYear('created_at', Carbon::now()->subMonths($i)->year)
+                ->count();
         }
 
-        return view('admin.dashboardAdmin', compact('totalClients', 'recentClients', 'months', 'clientCounts'));
+        return view('admin.dashboardAdmin', compact('totalClients', 'totalDocuments', 'recentClients', 'months', 'clientsOnline',  'totalMessages','clientCounts'));
     }
 }
