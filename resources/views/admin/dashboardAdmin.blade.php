@@ -53,9 +53,7 @@
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow flex items-center gap-4 relative">
             <div class="p-3 bg-red-100 dark:bg-red-900 rounded-full">
                 <!-- Icône Messages -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cd1818" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-text-icon lucide-message-square-text"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M13 8H7"/><path d="M17 12H7"/></svg>
             </div>
             <div>
                 <p class="text-sm text-gray-500 dark:text-gray-400">Messages Reçus</p>
@@ -72,11 +70,7 @@
         <!-- Clients en ligne -->
         <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow flex items-center gap-4">
             <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <circle cx="12" cy="12" r="6" fill="currentColor"/>
-                </svg>
-            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ebc400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link-icon lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>            </div>
             <div>
                 <p class="text-sm text-gray-500 dark:text-gray-400">Clients en ligne</p>
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $clientsOnline }}</h2>
