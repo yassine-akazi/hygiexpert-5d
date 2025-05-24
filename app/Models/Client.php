@@ -10,9 +10,6 @@ class Client extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * Le guard utilisé pour l’authentification.
-     */
     protected $guard = 'client';
 
     protected $fillable = [
@@ -25,11 +22,17 @@ class Client extends Authenticatable
         'email',
         'password',
         'adresse',
+        // si tu veux rendre last_seen modifiable manuellement :
+        'last_seen',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $casts = [
+        'last_seen' => 'datetime',
     ];
 
     public function documents()

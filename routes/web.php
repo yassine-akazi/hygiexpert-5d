@@ -55,6 +55,7 @@ Route::get('/clients/{id}/pdfs', [ClientController::class, 'showClientPdfsByYear
 ->name('clients.showPdfsByYear');
 Route::get('/contact-messages', [ContactMessageController::class, 'listMessages'])->name('contact_messages.index');
         Route::delete('/contact-messages/delete', [ContactMessageController::class, 'deleteSelected'])->name('contact_messages.delete');
+        Route::get('/contact-messages/{id}', [ContactMessageController::class, 'markAsRead'])->name('contact_messages.read');
 
 
 
@@ -106,7 +107,7 @@ Route::middleware([RedirectIfNotClient::class])->prefix('client')->name('client.
 
     Route::get('/pdfs', [ClientDashboardController::class, 'showPdfs'])->name('pdfs');
     Route::post('/logout', [ClientAuthController::class, 'logout'])->name('logout');
-
+    
 
 
 });

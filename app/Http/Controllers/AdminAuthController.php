@@ -49,26 +49,37 @@ class AdminAuthController extends Controller
 
         return redirect()->route('admin.login');
     }
-
     public function dashboard()
     {
         $totalClients = Client::count();
+        $totalDocuments = Document::count();
         $totalMessages = ContactMessage::count();
+        $newMessagesCount = ContactMessage::where('is_read', false)->count(); // <-- Défini ici
         $clientsOnline = Client::where('last_seen', '>=', now()->subMinutes(5))->count();
-                $totalDocuments = Document::count(); // <-- Ajouté ici
-
         $recentClients = Client::orderBy('created_at', 'desc')->take(5)->get();
-
-        // Pour le graphique (optionnel)
+        $clientsLast24h = Client::where('last_seen', '>=', now()->subDay())->get();
+        $messages = ContactMessage::orderBy('created_at', 'desc')->take(5)->get();
+    
         $months = [];
         $clientCounts = [];
-        for ($i = 5;  $i >= 0; $i--) {
+        for ($i = 5; $i >= 0; $i--) {
             $months[] = Carbon::now()->subMonths($i)->format('F');
             $clientCounts[] = Client::whereMonth('created_at', Carbon::now()->subMonths($i)->month)
                 ->whereYear('created_at', Carbon::now()->subMonths($i)->year)
                 ->count();
         }
-
-        return view('admin.dashboardAdmin', compact('totalClients', 'totalDocuments', 'recentClients', 'months', 'clientsOnline',  'totalMessages','clientCounts'));
+    
+        return view('admin.dashboardAdmin', compact(
+            'totalClients', 
+            'totalDocuments', 
+            'totalMessages',
+            'newMessagesCount', // <-- Important!
+            'clientsOnline',
+            'recentClients', 
+            'clientsLast24h',
+            'messages',
+            'months',
+            'clientCounts'
+        ));
     }
 }

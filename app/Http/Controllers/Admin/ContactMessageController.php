@@ -37,5 +37,16 @@ class ContactMessageController extends Controller
 
     return view('admin.contact_messages.index', compact('messages'));
 }
+public function markAsRead($id)
+{
+    $message = ContactMessage::findOrFail($id);
+
+    if (!$message->is_read) {
+        $message->is_read = true;
+        $message->save();
+    }
+
+    return view('admin.contact_messages.show', compact('message'));
+}
       
 }
