@@ -12,17 +12,28 @@ class ClientAuthController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
+{
+    $credentials = $request->only('email', 'password');
+    $remember = $request->has('remember');
 
-        if (Auth::guard('client')->attempt($credentials)) {
-            return redirect()->route('client.dashboard');
+    if (Auth::guard('client')->attempt($credentials, $remember)) {
+        if ($remember) {
+            cookie()->queue('remember_email', $request->email, 60 * 24 * 30);
+            
+
+        } else {
+            cookie()->queue(cookie()->forget('remember_email'));
+           
+
         }
 
-        return back()->withErrors([
-            'email' => 'Email ou mot de passe incorrect.',
-        ]);
+        return redirect()->route('client.dashboard');
     }
+
+    return back()->withErrors([
+        'email' => 'Email ou mot de passe incorrect.',
+    ]);
+}
     
     public function logout(Request $request)
     {

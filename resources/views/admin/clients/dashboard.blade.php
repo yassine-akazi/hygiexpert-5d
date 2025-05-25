@@ -8,6 +8,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mes fichiers PDF - {{ $client->nom }} {{ $client->prenom }}</title>
+  <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png" />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,7 +31,7 @@
 
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 shadow-sm flex justify-between items-center">
   <div class="flex items-center gap-3">
-    <img src="{{ asset('images/logo.png') }}" class="h-10" alt="Logo" />
+    <img src="{{ asset('images/logo.png') }}" class="h-10 mix-blend-multiply" alt="Logo"  />
     <span class="text-xl font-bold text-gray-800 dark:text-white"> </span>
   </div>
 
@@ -60,7 +61,9 @@
   </div>
 </nav>
 
-<main class="p-6 flex-grow pt-20">
+<main class="p-6 flex-grow pt-20 w-full max-w-7xl mx-auto">
+
+  {{-- Titre principal --}}
 
   <h2 class="text-3xl font-extrabold mb-8 text-gray-900 dark:text-white">
   Les Documents  de <span class="text-indigo-600">{{ $client->nom_entreprise }}</span>

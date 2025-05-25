@@ -9,7 +9,7 @@
 @endsection
 
 @section('content')
-<h1 class="text-3xl font-semibold text-gray-800 dark:text-white mb-6">📩 Messages reçus</h1>
+<h1 class="text-3xl font-semibold text-gray-800 dark:text-white mb-6"> Messages reçus</h1>
 
 <div class="flex justify-between items-center mb-4 mx-auto  gap-4">
   {{-- Recherche --}}
@@ -67,9 +67,9 @@
           <th class="px-4 py-4">
             <input type="checkbox" x-model="selectAll" class="h-4 w-4 text-indigo-600 rounded">
           </th>
-          <th class="px-6 py-4">👤 Nom</th>
-          <th class="px-6 py-4">📧 Email</th>
-          <th class="px-6 py-4">💬 Message</th>
+          <th class="px-6 py-4"> Nom</th>
+          <th class="px-6 py-4"> Email</th>
+          <th class="px-6 py-4"> Message</th>
           <th class="px-6 py-4">📅 Date</th>
         </tr>
       </thead>
@@ -81,7 +81,7 @@
           </td>
           <td class="px-6 py-4 font-medium">{{ $msg->name }}</td>
           <td class="px-6 py-4">{{ $msg->email }}</td>
-          <td class="px-6 py-4">{{ $msg->message }}</td>
+          <td class="px-6 py-4 ">{{ $msg->message }}</td>
           <td class="px-6 py-4">{{ $msg->created_at->format('d/m/Y H:i') }}</td>
         </tr>
         @empty

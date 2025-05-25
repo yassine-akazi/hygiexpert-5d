@@ -122,3 +122,4 @@ Route::middleware(['auth:client', 'updateLastSeen'])->prefix('client')->name('cl
     // tes routes client ici
 });
 
+Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.send');

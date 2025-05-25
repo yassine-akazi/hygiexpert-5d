@@ -8,6 +8,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Contact - {{ $client->nom ?? 'Invité' }} {{ $client->prenom ?? '' }}</title>
+  <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png" />
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>

@@ -2,7 +2,7 @@
   <div class="flex justify-between items-center">
     <!-- Logo et Titre -->
     <div class="flex items-center gap-3">
-      <img src="{{ asset('images/logo.png') }}" class="h-10" alt="Logo">
+      <img src="{{ asset('images/logo.png') }}" class="h-10 bg-transparent" alt="Logo">
       <span class="text-xl font-bold text-gray-800 dark:text-white">AdminPanel</span>
     </div>
 
