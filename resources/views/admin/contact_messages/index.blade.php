@@ -7,7 +7,11 @@
 @section('sidebar')
     @include('admin.partials.sidebar')
 @endsection
+@php
+use Illuminate\Support\Str;
 
+$max = 200;
+@endphp
 @section('content')
 <h1 class="text-3xl font-semibold text-gray-800 dark:text-white mb-6"> Messages reçus</h1>
 
@@ -59,30 +63,55 @@
     x-init="$watch('selectAll', value => {
       document.querySelectorAll('.message-checkbox').forEach(cb => cb.checked = value);
     })" 
-    class="overflow-x-auto bg-white dark:bg-gray-800 shadow-md rounded-lg mx-auto "
+    class="overflow-x-auto bg-white dark:bg-gray-800 shadow-lg rounded-lg p-4"
   >
     <table class="min-w-full text-sm text-left text-gray-700 dark:text-gray-200">
       <thead class="bg-gray-100 dark:bg-gray-700 uppercase text-xs font-semibold">
         <tr>
-          <th class="px-4 py-4">
-            <input type="checkbox" x-model="selectAll" class="h-4 w-4 text-indigo-600 rounded">
+          <th class="px-4 py-3">
+            <input type="checkbox" x-model="selectAll" class="h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500">
           </th>
-          <th class="px-6 py-4"> Nom</th>
-          <th class="px-6 py-4"> Email</th>
-          <th class="px-6 py-4"> Message</th>
-          <th class="px-6 py-4">📅 Date</th>
+          <th class="px-6 py-3">Nom</th>
+          <th class="px-6 py-3">Email</th>
+          <th class="px-6 py-3 max-w-md">Message</th>
+          <th class="px-6 py-3">📅 Date</th>
         </tr>
       </thead>
       <tbody>
         @forelse($messages as $msg)
-        <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
+        <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition duration-150 ease-in-out">
           <td class="px-4 py-4">
-            <input type="checkbox" name="selected[]" value="{{ $msg->id }}" form="deleteMessagesForm" class="message-checkbox h-4 w-4 text-indigo-600 rounded">
+            <input type="checkbox" name="selected[]" value="{{ $msg->id }}" form="deleteMessagesForm"
+              class="message-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
           </td>
-          <td class="px-6 py-4 font-medium">{{ $msg->name }}</td>
-          <td class="px-6 py-4">{{ $msg->email }}</td>
-          <td class="px-6 py-4 ">{{ $msg->message }}</td>
-          <td class="px-6 py-4">{{ $msg->created_at->format('d/m/Y H:i') }}</td>
+          <td class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+            {{ $msg->name }}
+          </td>
+          <td class="px-6 py-4 text-gray-700 dark:text-gray-300 whitespace-nowrap">
+            {{ $msg->email }}
+          </td>
+          <td class="px-6 py-4 text-gray-700 dark:text-gray-300 max-w-3xl overflow-hidden break-words">
+  @php
+    $max = 200;
+    $message = $msg->message;
+    $truncated = \Illuminate\Support\Str::limit($message, $max, '...');
+  @endphp
+
+  @if (strlen($message) > $max)
+    <span 
+      x-data="{ showFull: false }"
+      x-on:click="showFull = true; $dispatch('open-modal', { message: '{{ addslashes($message) }}' })"
+      class="cursor-pointer underline hover:text-indigo-600"
+    >
+      {{ $truncated }}
+    </span>
+  @else
+    {{ $message }}
+  @endif
+</td>
+          <td class="px-6 py-4 text-gray-500 dark:text-gray-400 whitespace-nowrap">
+            {{ $msg->created_at->format('d/m/Y H:i') }}
+          </td>
         </tr>
         @empty
         <tr>
@@ -91,6 +120,9 @@
         @endforelse
       </tbody>
     </table>
+
+    <!-- Bouton Supprimer -->
+ 
   </div>
 </form>
 

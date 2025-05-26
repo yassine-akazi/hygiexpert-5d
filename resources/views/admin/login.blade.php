@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login Admin</title>
+  <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -47,7 +48,7 @@
 
     <!-- Logo -->
     <div class="flex justify-center mb-8 -">
-      <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-[200px] h-auto drop-shadow-lg ">
+      <img src="{{ asset('images/favicon.png') }}" alt="Logo" class="w-[150px] h-auto drop-shadow-lg ">
     </div>
 
     <!-- Formulaire -->
