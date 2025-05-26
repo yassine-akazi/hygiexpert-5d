@@ -10,4 +10,8 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    uild: {
+        outDir: 'dist',  // Change le dossier de sortie en 'dist'
+        // si besoin, autres configs ici
+      },
 });
