@@ -156,7 +156,7 @@
 
       <!-- 3. Dérptilisation -->
       <div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition flex flex-col items-center">
-        <h3 class="text-xl font-semibold mb-2">Dérptilisation</h3>
+        <h3 class="text-xl font-semibold mb-2">Déréptilisation</h3>
         <p class="text-gray-600 mb-4 text-center">Contrôle et élimination des reptiles pour protéger vos espaces de vie et de travail.</p>
         <img src="{{ asset('images/services/derptilisation.jpg') }}" alt="Dérptilisation" class="w-full h-40 object-cover rounded-lg" />
       </div>
@@ -370,8 +370,7 @@
           <li>Désinsectisation</li>
           <li>Désinfection</li>
           <li>Dépigeonnage</li>
-          <li>Dérptilisation
-          </li>
+          <li> déréptilisation</li>
 
         </ul>
       </div>
