@@ -122,9 +122,9 @@ Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.
 
 Route::get('/test-db', function () {
     try {
-        DB::connection()->getPdo();
-        return "Connexion DB OK";
+        $result = DB::select('SELECT NOW() as now');
+        return response()->json($result);
     } catch (\Exception $e) {
-        return "Erreur DB : " . $e->getMessage();
+        return response()->json(['error' => $e->getMessage()], 500);
     }
 });
