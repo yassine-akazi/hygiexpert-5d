@@ -18,13 +18,15 @@ $max = 200;
 <div class="flex justify-between items-center mb-4 mx-auto  gap-4">
   {{-- Recherche --}}
   <form method="GET" action="{{ route('admin.contact_messages.index') }}" class="flex-grow max-w-md flex gap-2 items-center">
-    <input
-      type="text"
-      name="search"
-      value="{{ request('search') }}"
-      placeholder="Recherche par nom ou email"
-      class="px-4 py-2 border border-gray-700 rounded-l flex-grow dark:bg-gray-700 dark:text-white"
-    />
+  <input 
+    type="text" 
+    name="search" 
+    value="{{ request('search') }}" 
+    placeholder="Rechercher un client..." 
+    class="px-4 py-2 border rounded w-full 
+           bg-white text-black 
+           dark:bg-gray-800 dark:text-white" 
+/>
     <button 
       type="submit" 
       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-r flex items-center gap-2"
