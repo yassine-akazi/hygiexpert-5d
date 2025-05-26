@@ -113,13 +113,18 @@ Route::middleware([RedirectIfNotClient::class])->prefix('client')->name('client.
 });
 
 
-Route::get('/test-middleware', function () {
-    $middleware = app(\App\Http\Middleware\AuthenticateClient::class);
-    return 'Middleware instancié avec succès : ' . get_class($middleware);
-});
 
 Route::middleware(['auth:client', 'updateLastSeen'])->prefix('client')->name('client.')->group(function () {
     // tes routes client ici
 });
 
 Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.send');
+
+Route::get('/test-db', function () {
+    try {
+        DB::connection()->getPdo();
+        return "Connexion DB OK";
+    } catch (\Exception $e) {
+        return "Erreur DB : " . $e->getMessage();
+    }
+});
