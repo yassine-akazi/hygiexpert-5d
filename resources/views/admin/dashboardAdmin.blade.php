@@ -128,40 +128,10 @@
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const ctx = document.getElementById('clientGrowthChart').getContext('2d');
-const clientGrowthChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: {!! json_encode($months) !!},
-        datasets: [{
-            label: 'Inscriptions',
-            data: {!! json_encode($clientCounts) !!},
-            borderColor: 'rgb(99, 102, 241)',
-            backgroundColor: 'rgba(99, 102, 241, 0.1)',
-            tension: 0.3,
-            fill: true,
-            pointBackgroundColor: 'rgb(99, 102, 241)'
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                labels: { color: '#ccc' }
-            }
-        },
-        scales: {
-            x: {
-                ticks: { color: '#ccc' },
-                grid: { color: '#444' }
-            },
-            y: {
-                beginAtZero: true,
-                ticks: { color: '#ccc' },
-                grid: { color: '#444' }
-            }
-        }
-    }
-});
+    window.chartData = {
+        months: {!! json_encode($months) !!},
+        clientCounts: {!! json_encode($clientCounts) !!}
+    };
 </script>
+<script src="{{ asset('js/dashboard.js') }}"></script>
 @endsection

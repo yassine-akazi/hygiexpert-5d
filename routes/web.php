@@ -56,6 +56,7 @@ Route::get('/clients/{id}/pdfs', [ClientController::class, 'showClientPdfsByYear
 Route::get('/contact-messages', [ContactMessageController::class, 'listMessages'])->name('contact_messages.index');
         Route::delete('/contact-messages/delete', [ContactMessageController::class, 'deleteSelected'])->name('contact_messages.delete');
         Route::get('/contact-messages/{id}', [ContactMessageController::class, 'markAsRead'])->name('contact_messages.read');
+        Route::get('/admin/clients/{id}', [ClientController::class, 'edit'])->name('admin.clients.edit');
 
 
 
@@ -114,17 +115,7 @@ Route::middleware([RedirectIfNotClient::class])->prefix('client')->name('client.
 
 
 
-Route::middleware(['auth:client', 'updateLastSeen'])->prefix('client')->name('client.')->group(function () {
-    // tes routes client ici
-});
+
 
 Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.send');
 
-Route::get('/test-db', function () {
-    try {
-        $result = DB::select('SELECT NOW() as now');
-        return response()->json($result);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
-});

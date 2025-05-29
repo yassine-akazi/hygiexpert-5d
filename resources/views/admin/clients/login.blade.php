@@ -6,87 +6,59 @@
   <title>HYGIEXPERT 5D</title>
   <link rel="icon" href="{{ asset('images/favicon.png') }}" type="image/png" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @keyframes slide {
-      0% { transform: translateX(0%); }
-      100% { transform: translateX(-50%); }
-    }
-    .animate-slide {
-      animation: slide 20s linear infinite;
-      width: max-content;
-    }
-    @keyframes fadeScaleIn {
-      0% { opacity: 0; transform: scale(0.95); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-    .fade-scale-in {
-      animation: fadeScaleIn 0.6s ease forwards;
-      animation-delay: 0.3s;
-      opacity: 0;
-    }
-    .btn-3d {
-      background: linear-gradient(145deg, #4f46e5, #3730a3);
-      box-shadow: 0 5px 15px rgba(79, 70, 229, 0.6), 0 8px 20px rgba(55, 48, 163, 0.4);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      transform-style: preserve-3d;
-      perspective: 1000px;
-    }
-    .btn-3d:hover {
-      box-shadow: 0 12px 24px rgba(79, 70, 229, 0.8), 0 18px 40px rgba(55, 48, 163, 0.6);
-      transform: translateY(-5px);
-    }
-    .btn-3d:active {
-      transform: translateY(-2px) scale(0.98);
-      box-shadow: 0 6px 12px rgba(79, 70, 229, 0.7), 0 9px 18px rgba(55, 48, 163, 0.5);
-    }
+  <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
     
+  
+
+  
   </style>
 </head>
 
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen justify-between">
 
   <!-- Navbar -->
-  <header class="bg-white shadow-md sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-40">
+  <header class="navbar-blur sticky top-0 z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-40 smooth-hover">
 
-    <!-- Bouton Hamburger Mobile -->
-    <button id="menu-toggle" class="md:hidden text-gray-700 focus:outline-none">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-        viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
-    </button>
+      <!-- Bouton Hamburger Mobile -->
+      <button id="menu-toggle" class="md:hidden text-gray-700 focus:outline-none smooth-hover">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
 
-    <!-- Menu Desktop -->
-    <nav class="space-x-6 hidden md:flex">
-      <a href="#heroSlider" class="text-gray-700 hover:text-indigo-600 font-medium">Accueil</a>
-      <a href="#about" class="text-gray-700 hover:text-indigo-600 font-medium">À propos</a>
-      <a href="#services" class="text-gray-700 hover:text-indigo-600 font-medium">Services</a>
-      <a href="#boutique" class="text-gray-700 hover:text-indigo-600 font-medium">Boutique</a>
-      <a href="#map" class="text-gray-700 hover:text-indigo-600 font-medium">Localisation</a>
-      <a href="#login" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow hover:bg-blue-700 transition-all duration-200 btn-3d flex items-center">
-        Connexion
-      </a>
-    </nav>
-  </div>
+      <!-- Menu Desktop -->
+      <nav class="space-x-8 hidden md:flex items-center">
+        <a href="#heroSlider" class="text-gray-700 hover:text-purple-600 font-medium smooth-hover">Accueil</a>
+        <a href="#about" class="text-gray-700 hover:text-purple-600 font-medium smooth-hover">À propos</a>
+        <a href="#services" class="text-gray-700 hover:text-purple-600 font-medium smooth-hover">Services</a>
+        <a href="#boutique" class="text-gray-700 hover:text-purple-600 font-medium smooth-hover">Boutique</a>
+        <a href="#map" class="text-gray-700 hover:text-purple-600 font-medium smooth-hover">Localisation</a>
+        <a href="#login" class="btn-modern text-white px-6 py-3 rounded-full font-semibold shadow-lg">
+          Connexion
+        </a>
+      </nav>
+    </div>
 
-  <!-- Menu Mobile -->
-  <div id="mobile-menu" class="md:hidden hidden px-4 pb-4">
-    <nav class="flex flex-col space-y-2">
-      <a href="#heroSlider" class="text-gray-700 hover:text-indigo-600 font-medium">Accueil</a>
-      <a href="#about" class="text-gray-700 hover:text-indigo-600 font-medium">À propos</a>
-      <a href="#services" class="text-gray-700 hover:text-indigo-600 font-medium">Services</a>
-      <a href="#boutique" class="text-gray-700 hover:text-indigo-600 font-medium">Boutique</a>
-      <a href="#map" class="text-gray-700 hover:text-indigo-600 font-medium">Localisation</a>
-      <div class="flex justify-center">
-  <a href="#login" class="inline-flex gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow hover:bg-blue-700 transition-all duration-200 btn-3d flex items-center">
-    Connexion
-  </a>
-</div>
-    </nav>
-  </div>
-</header>
+    <!-- Menu Mobile -->
+    <div id="mobile-menu" class="md:hidden hidden px-4 pb-4 glass-dark">
+      <nav class="flex flex-col space-y-4">
+        <a href="#heroSlider" class="text-gray-700 hover:text-purple-600 font-medium smooth-hover">Accueil</a>
+        <a href="#about" class="text-gray-700 hover:text-purple-600 font-medium smooth-hover">À propos</a>
+        <a href="#services" class="text-gray-700 hover:text-purple-600 font-medium smooth-hover">Services</a>
+        <a href="#boutique" class="text-gray-700 hover:text-purple-600 font-medium smooth-hover">Boutique</a>
+        <a href="#map" class="text-gray-700 hover:text-purple-600 font-medium smooth-hover">Localisation</a>
+        <div class="flex justify-center pt-4">
+          <a href="#login" class="btn-modern text-white px-6 py-3 rounded-full font-semibold shadow-lg">
+            Connexion
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
 
 
   <!-- Hero Slider -->
@@ -326,7 +298,7 @@
   </button>
 </form>
       </div>
-    </div>
+    </div> 
   </main>
 </section>
 
@@ -334,7 +306,6 @@
 
 
   <!-- Footer -->
-<!-- filepath: /Users/yassineakazi/Desktop/hegyexpret5d/clientproject/resources/views/admin/clients/login.blade.php -->
 <footer class="bg-white from-gray-900 to-gray-800 text-black-300 mt-12">
   <div class="max-w-7xl mx-auto px-4 py-12">
     <!-- Top Section -->
@@ -450,37 +421,6 @@
 </div>
 
 
-  <script>
-  let currentSlide = 0;
-  const slider = document.getElementById('heroSlider');
-  const slides = slider.children;
-  const totalSlides = slides.length;
-
-  setInterval(() => {
-    currentSlide = (currentSlide + 1) % totalSlides;
-    slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-  }, 5000); // change every 5 seconds
-
-  document.addEventListener('DOMContentLoaded', function () {
-    // Coordonnées HYGIEXPERT 5D (exemple : Agadir, Maroc)
-    var lat = 30.427755;
-    var lon = -9.598107;
-
-    var map = L.map('mapid').setView([lat, lon], 13);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    L.marker([lat, lon]).addTo(map)
-      .bindPopup('HYGIEXPERT 5D - Notre siège')
-      .openPopup();
-  });
-
-  document.getElementById('menu-toggle').addEventListener('click', function () {
-    const menu = document.getElementById('mobile-menu');
-    menu.classList.toggle('hidden');
-  });
-</script>
+  <script src="{{ asset('js/script.js') }}"></script>
 </body>
 </html>
