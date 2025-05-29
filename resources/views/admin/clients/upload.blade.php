@@ -12,15 +12,16 @@
 
 @section('content')
 
-<div class="max-w-5xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-md shadow-md">
-    <h1 class="text-2xl font-semibold mb-8 text-gray-800 dark:text-gray-100 text-center">
-        Uploader les fichiers PDF pour <span class="font-bold text-green-600 ">{{ $client->nom }} {{ $client->prenom }}</span>
+<div class="max-w-5xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl">
+    <h1 class="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-white">
+        Uploader les fichiers PDF pour 
+        <span class="text-green-600">{{ $client->nom }} {{ $client->prenom }}</span>
     </h1>
 
-    <div class="mb-6 text-end">
+    <div class="mb-8 flex justify-end">
         <a href="{{ route('admin.clients.showPdfsByYear', $client->id) }}" 
-           class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-800 text-white rounded shadow">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+           class="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                 <rect width="20" height="5" x="2" y="3" rx="1"/>
                 <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/>
                 <path d="M10 12h4"/>
@@ -29,21 +30,22 @@
         </a>
     </div>
 
+    {{-- Success / Error Messages --}}
     @if(session('success'))
-        <div class="mb-6 p-3 bg-green-100 text-green-800 rounded">
+        <div class="mb-6 p-4 bg-green-100 text-green-800 border border-green-200 rounded-lg">
             {{ session('success') }}
         </div>
     @endif
 
     @if(session('error'))
-        <div class="mb-6 p-3 bg-red-100 text-red-800 rounded">
+        <div class="mb-6 p-4 bg-red-100 text-red-800 border border-red-200 rounded-lg">
             {{ session('error') }}
         </div>
     @endif
 
     @if ($errors->any())
-        <div class="mb-6 p-3 bg-red-100 text-red-800 rounded">
-            <ul class="list-disc pl-5">
+        <div class="mb-6 p-4 bg-red-100 text-red-800 border border-red-200 rounded-lg">
+            <ul class="list-disc pl-5 space-y-1">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -51,21 +53,36 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.clients.upload', $client->id) }}" method="POST" enctype="multipart/form-data">
+    {{-- Formulaire --}}
+    <form action="{{ route('admin.clients.upload', $client->id) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
         @csrf
-        <div class="grid grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-6">
     @foreach ($labels as $key => $label)
-        <div class="flex flex-col">
-            <label for="{{ $key }}" class="mb-1 font-medium text-gray-700 dark:text-gray-300">{{ $label }}</label>
-            <input id="{{ $key }}" type="file" name="{{ $key }}[]" accept="application/pdf" multiple
-                class="border rounded px-3 py-2 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        <div class="space-y-2">
+            <label for="{{ $key }}" class="block text-gray-700 dark:text-gray-300 font-semibold">
+                {{ $label }}
+            </label>
+
+            <input 
+                type="text" 
+                name="custom_names[{{ $key }}][]" 
+                placeholder="Nom du fichier" 
+                class="w-full px-4 py-2 border rounded-lg text-gray-700 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none" />
+                
+
+            <input 
+                id="{{ $key }}" 
+                type="file" 
+                name="{{ $key }}[]" 
+                accept="application/pdf" 
+                class="w-full px-4 py-2 border rounded-lg text-gray-700 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none" />
         </div>
     @endforeach
 </div>
 
-        <div class="mt-8">
+        <div class="pt-4">
             <button type="submit" 
-                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded font-semibold transition">
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg text-lg font-semibold transition">
                 Uploader les fichiers
             </button>
         </div>

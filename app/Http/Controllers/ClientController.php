@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\Document;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ClientController extends Controller
 {
@@ -144,11 +145,11 @@ class ClientController extends Controller
         'attestation_hygiexpert5d', 'Dossier_technique_des_produits', "Rapport_d'intervention"
     ];
 
-    // Validation : champs multiples (tableaux de fichiers)
+    // Validation des fichiers
     $rules = [];
     foreach ($fields as $field) {
         $rules[$field] = 'nullable|array';
-        $rules["$field.*"] = 'file|mimes:pdf|max:102400'; // 100MB max par fichier
+        $rules["$field.*"] = 'file|mimes:pdf|max:102400'; // max 100MB
     }
     $request->validate($rules);
 
@@ -157,8 +158,11 @@ class ClientController extends Controller
     $errors = [];
 
     foreach ($fields as $field) {
-        if ($request->hasFile($field)) {
-            foreach ($request->file($field) as $file) {
+        $files = $request->file($field);
+        $customNames = $request->input("custom_names.$field", []);
+
+        if ($files && is_array($files)) {
+            foreach ($files as $index => $file) {
                 try {
                     $pdf = $parser->parseFile($file->getRealPath());
                     $pages = $pdf->getDetails()['Pages'] ?? 0;
@@ -172,22 +176,29 @@ class ClientController extends Controller
                     continue;
                 }
 
-                // Construction du nom de fichier unique
-                $date = date('(d.m.Y)');
-                $baseName = strtolower($field) . ' ' . $date;
+                // ➤ Nom personnalisé ou nom automatique
+                $customName = $customNames[$index] ?? null;
                 $extension = $file->getClientOriginalExtension();
+                
+
+                if ($customName) {
+                    $baseName = Str::slug($customName) . ' ' ;
+                } else {
+                    $baseName = strtolower($field) . ' ' ;
+                }
+
                 $filename = $baseName . '.' . $extension;
                 $counter = 1;
 
+                // Éviter les conflits de noms
                 while (\Storage::disk('public')->exists("uploads/pdfs/$filename")) {
                     $filename = $baseName . " ($counter)." . $extension;
                     $counter++;
                 }
 
-                // Stocker le fichier
+                // Sauvegarde
                 $path = $file->storeAs('uploads/pdfs', $filename, 'public');
 
-                // Sauvegarder en base
                 Document::create([
                     'client_id' => $client->id,
                     'type' => $field,
@@ -203,11 +214,9 @@ class ClientController extends Controller
         return redirect()->back()->withErrors($errors);
     }
 
-    if ($uploaded) {
-        return redirect()->back()->with('success', 'Fichiers uploadés avec succès.');
-    } else {
-        return redirect()->back()->with('error', 'Aucun fichier n’a été uploadé.');
-    }
+    return $uploaded
+        ? redirect()->back()->with('success', 'Fichiers uploadés avec succès.')
+        : redirect()->back()->with('error', 'Aucun fichier n’a été uploadé.');
 }
 
     // Suppression fichiers sélectionnés
