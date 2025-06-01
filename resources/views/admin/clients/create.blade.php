@@ -131,5 +131,13 @@
     </div>
 </div>
 
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="module" src="{{ asset('js/create.js') }}"></script>
+<script></script>
+
+
+
+
 @endsection

@@ -62,21 +62,31 @@
 
 
   <!-- Hero Slider -->
-<section class="relative h-[500px] overflow-hidden">
-   <div id="heroSlider" class="absolute inset-0 flex transition-transform duration-1000">
-      <div class="min-w-full bg-cover bg-center" style="background-image: url('{{ asset('images/slider1.jpg') }}');"></div>
-      <div class="min-w-full bg-cover bg-center" style="background-image: url('{{ asset('images/slider2.jpg') }}');"></div>
-      <div class="min-w-full bg-cover bg-center" style="background-image: url('{{ asset('images/slider3.jpg') }}');"></div>
-    </div>
-    <div class="absolute inset-0 bg-black/50 flex items-center justify-center text-center text-white z-10 px-6">
-      <div class="fade-scale-in max-w-3xl">
-        <h1 class="text-5xl md:text-6xl font-extrabold mb-4 tracking-tight">Bienvenue chez HYGIEXPERT 5D</h1>
-        <p class="text-lg md:text-xl mb-6 leading-relaxed">Experts en dératisation, désinsectisation, déréptilisation, dépigeonnage et désinfection</p>
-        <a href="#services" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold shadow-lg transition">
+  <section class="relative h-[500px] overflow-hidden">
+  <!-- Slider -->
+  <div id="heroSlider" class="absolute inset-0 flex transition-transform duration-1000">
+    <div class="min-w-full bg-cover bg-center" style="background-image: url('{{ asset('images/slider1.jpg') }}');"></div>
+    <div class="min-w-full bg-cover bg-center" style="background-image: url('{{ asset('images/slider2.jpg') }}');"></div>
+    <div class="min-w-full bg-cover bg-center" style="background-image: url('{{ asset('images/slider3.jpg') }}');"></div>
+  </div>
+
+  <!-- Overlay content -->
+  <div class="absolute inset-0 bg-black/50 flex items-center justify-center text-center text-white z-10 px-6">
+    <div class="fade-scale-in max-w-3xl">
+      <h1 class="text-5xl md:text-6xl font-extrabold mb-4 tracking-tight">Bienvenue chez HYGIEXPERT 5D</h1>
+      <p class="text-lg md:text-xl mb-6 leading-relaxed">Experts en dératisation, désinsectisation, déréptilisation, dépigeonnage et désinfection</p>
+      <a href="#services" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold shadow-lg transition">
         Découvrir nos services
       </a>
-      </div>
     </div>
+  </div>
+
+  <!-- Boutons numérotés -->
+  <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-3 z-20">
+    <button class="slider-btn w-4 h-4 rounded-full bg-white/80 text-gray-700 font-bold hover:bg-indigo-500 hover:text-white transition" data-slide="0"></button>
+    <button class="slider-btn w-4 h-4 rounded-full bg-white/80 text-gray-700 font-bold hover:bg-indigo-500 hover:text-white transition" data-slide="1"></button>
+    <button class="slider-btn w-4 h-4 rounded-full bg-white/80 text-gray-700 font-bold hover:bg-indigo-500 hover:text-white transition" data-slide="2"></button>
+  </div>
 </section>
 
   <!-- About Us -->
@@ -422,5 +432,6 @@
 
 
   <script src="{{ asset('js/script.js') }}"></script>
+
 </body>
 </html>

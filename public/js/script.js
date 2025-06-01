@@ -1,30 +1,52 @@
-let currentSlide = 0;
+document.addEventListener('DOMContentLoaded', function () {
   const slider = document.getElementById('heroSlider');
   const slides = slider.children;
   const totalSlides = slides.length;
+  const buttons = document.querySelectorAll('.slider-btn');
 
-  setInterval(() => {
-    currentSlide = (currentSlide + 1) % totalSlides;
+  let currentSlide = 0;
+  let interval = setInterval(nextSlide, 5000);
+
+  function updateSlider() {
     slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-  }, 5000); // change every 5 seconds
+    buttons.forEach((btn, index) => {
+      btn.classList.toggle('bg-indigo-500', index === currentSlide);
+      btn.classList.toggle('text-white', index === currentSlide);
+      btn.classList.toggle('bg-white/80', index !== currentSlide);
+      btn.classList.toggle('text-gray-700', index !== currentSlide);
+    });
+  }
 
-  document.addEventListener('DOMContentLoaded', function () {
-    // Coordonnées HYGIEXPERT 5D (exemple : Agadir, Maroc)
-    var lat = 30.427755;
-    var lon = -9.598107;
+  function nextSlide() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    updateSlider();
+  }
 
-    var map = L.map('mapid').setView([lat, lon], 13);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    L.marker([lat, lon]).addTo(map)
-      .bindPopup('HYGIEXPERT 5D - Notre siège')
-      .openPopup();
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      currentSlide = parseInt(button.getAttribute('data-slide'));
+      updateSlider();
+      resetInterval();
+    });
   });
 
-  document.getElementById('menu-toggle').addEventListener('click', function () {
-    const menu = document.getElementById('mobile-menu');
-    menu.classList.toggle('hidden');
-  });
+  function resetInterval() {
+    clearInterval(interval);
+    interval = setInterval(nextSlide, 5000);
+  }
+
+  updateSlider(); // initial
+});
+
+  const style = document.createElement('style');
+style.textContent = `
+@keyframes slide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-slide {
+  animation: slide 10s linear infinite;
+}
+`;
+document.head.appendChild(style);
