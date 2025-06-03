@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
   updateSlider(); // initial
 });
 
-  const style = document.createElement('style');
+const style = document.createElement('style');
 style.textContent = `
 @keyframes slide {
   0% { transform: translateX(0); }
@@ -47,6 +47,11 @@ style.textContent = `
 
 .animate-slide {
   animation: slide 10s linear infinite;
+  animation-play-state: running;
+}
+
+.animate-slide:hover {
+  animation-play-state: paused;
 }
 `;
 document.head.appendChild(style);
