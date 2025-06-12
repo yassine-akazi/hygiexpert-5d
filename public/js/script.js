@@ -55,3 +55,67 @@ style.textContent = `
 }
 `;
 document.head.appendChild(style);
+
+function toggleContactSection() {
+  const section = document.getElementById('contactSection');
+  section.classList.toggle('hidden');
+}
+
+function sendWhatsApp() {
+  const msg = document.getElementById('whatsappMessage').value.trim();
+  const phone = "212677864237";
+
+  if (msg) {
+    const encoded = encodeURIComponent(msg);
+    const url = `https://wa.me/${phone}?text=${encoded}`;
+
+    // SweetAlert de confirmation avant envoi
+    Swal.fire({
+      title: 'Envoyer ce message via WhatsApp ?',
+      text: `"${msg}"`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#10B981', // Vert
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, envoyer',
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.open(url, '_blank');
+        document.getElementById('whatsappMessage').value = '';
+
+        // Message de succès
+        Swal.fire({
+          icon: 'success',
+          title: 'Message envoyé !',
+          text: 'WhatsApp a été ouvert avec votre message.',
+          timer: 2000,
+          showConfirmButton: false
+        });
+
+        closeContactSection();
+      }
+    });
+
+  } else {
+    // Alerte d'erreur si message vide
+    Swal.fire({
+      icon: 'warning',
+      title: 'Message vide',
+      text: 'Écris un message avant d’envoyer.'
+    });
+  }
+}
+
+function closeContactSection() {
+  document.getElementById('contactSection').classList.add('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const toggleBtn = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  toggleBtn.addEventListener('click', function () {
+    mobileMenu.classList.toggle('hidden');
+  });
+});

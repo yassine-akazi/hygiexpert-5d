@@ -67,14 +67,14 @@
       <!-- Password -->
       <div class="mb-6">
         <label for="password" class="block text-sm font-medium text-black/80">Password</label>
-        <input type="password" id="password" name="password"
+        <input type="password" id="password" name="password" value="{{ old('email', $email ?? '') }}"
           class="mt-2 p-3 w-full rounded-xl bg-white/20 border border-white/30 text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-cyan-400" required />
       </div>
 
       <!-- Remember me -->
       <div class="flex items-center mb-6">
         <input id="remember" type="checkbox" name="remember"
-          class="w-4 h-4 text-cyan-500 bg-transparent border-gray-300 rounded" />
+          class="w-4 h-4 text-cyan-500 bg-transparent border-gray-300 rounded" {{ old('remember') || !empty($email) ? 'checked' : '' }} />
         <label for="remember" class="ml-2 text-sm text-black/70">Remember me</label>
       </div>
 

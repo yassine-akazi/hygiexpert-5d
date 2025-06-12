@@ -22,31 +22,36 @@ class AdminAuthController extends Controller
         if (Auth::check() && Auth::user()->role === 'admin') {
             return redirect()->route('admin.dashboard');
         }
-
-        return view('admin.login');
+    
+        $email = request()->cookie('remember_email');
+        return view('admin.login', compact('email'));
     }
+    
 
     /**
      * Gère la tentative de connexion de l'administrateur.
      */
     public function login(Request $request)
     {
-        // Validation des champs
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-
-        // Recherche de l'utilisateur
+    
         $user = User::where('email', $credentials['email'])->first();
-
-        // Vérification du mot de passe et du rôle admin
+    
         if ($user && Hash::check($credentials['password'], $user->password) && $user->role === 'admin') {
             Auth::login($user);
+    
+            if ($request->has('remember')) {
+                cookie()->queue('remember_email', $request->email, 60 * 24); // 24h
+            } else {
+                cookie()->queue(cookie()->forget('remember_email')); // Supprime le cookie si non coché
+            }
+    
             return redirect()->route('admin.dashboard');
         }
-
-        // Si échec, retourner avec une erreur
+    
         return back()->withErrors(['login_error' => 'Les informations de connexion sont incorrectes.']);
     }
 

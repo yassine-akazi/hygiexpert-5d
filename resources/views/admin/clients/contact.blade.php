@@ -152,10 +152,8 @@
     placeholder="Votre message (max. 200 caractères)"
     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
     oninput="updateCharCount()"
-  ></textarea>
-  <div id="charCount" class="text-sm text-gray-500 dark:text-gray-400 mt-1 text-right">
-    0 / 200 caractères
-  </div>
+      ></textarea>
+  <p id="charCount" class="text-sm mt-1 text-green-500">0 / 200 caractères</p>
 </div>
   <button
     type="submit"

@@ -12,9 +12,16 @@
 
 @section('content')
 @if (session('success'))
-    <div class="mb-4 px-4 py-2 bg-green-100 text-green-800 border border-green-300 rounded">
-        {{ session('success') }}
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Succès',
+                text: @json(session('success')),
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
 @endif
 
 <div class="p-6 bg-white dark:bg-gray-900 rounded shadow">
@@ -74,7 +81,15 @@
             <tbody>
                 @forelse($clients as $client)
                     <tr class="bg-white dark:bg-gray-900 border-b dark:border-gray-700">
-                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $client->nom }} {{ $client->prenom }}</td>
+                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white flex items-center gap-3">
+    {{-- Initiales dans un rond vert --}}
+    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-800 text-white font-bold text-sm">
+        {{ strtoupper(substr($client->nom, 0, 1)) }}{{ strtoupper(substr($client->prenom, 0, 1)) }}
+    </div>
+
+    {{-- Nom complet du client --}}
+    <span>{{ $client->nom }} {{ $client->prenom }}</span>
+</td>
                         <td class="px-6 py-4">{{ $client->ice }}</td>
                         <td class="px-6 py-4">{{ $client->nom_entreprise }}</td>
                         <td class="px-6 py-4">{{ $client->phone }}</td>
@@ -83,7 +98,7 @@
                         <td class="px-6 py-4 text-right flex items-center justify-end space-x-4">
                             <!-- Éditer -->
                             <a href="{{ route('admin.clients.edit', $client->id) }}"
-                               class="text-blue-600 hover:underline transition transform active:scale-90 duration-100 ease-in-out"
+                               class="text-blue-600 hover:underline transition transform active:scale-90 duration-100 ease-in-out hover:bg-blue-100 rounded p-1"
                                title="Éditer">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                      fill="none" stroke="currentColor" stroke-width="2"
@@ -101,9 +116,9 @@
                                 @method('DELETE')
                                 <button type="button"
                                         onclick="confirmDelete({{ $client->id }})"
-                                        class="text-red-600 hover:underline flex items-center space-x-1 transition transform active:scale-90 duration-100 ease-in-out"
+                                        class="text-red-600 hover:underline flex items-center space-x-1 transition transform active:scale-90 duration-100 ease-in-out hover:bg-red-100 rounded p-1"
                                         title="Supprimer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                          fill="none" stroke="currentColor" stroke-width="2"
                                          stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
@@ -115,7 +130,7 @@
 
                             <!-- Ajouter un fichier -->
                             <a href="{{ route('admin.clients.upload.form', $client->id) }}"
-                               class="text-green-600 hover:underline transition transform active:scale-90 duration-100 ease-in-out"
+                               class="text-green-600 hover:underline transition transform active:scale-90 duration-100 ease-in-out hover:bg-green-100 rounded p-1"
                                title="Ajouter un fichier">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                      fill="none" stroke="currentColor" stroke-width="2"
@@ -129,7 +144,7 @@
 
                             <!-- Voir PDF -->
                             <a href="{{ route('admin.clients.showPdfsByYear', $client->id) }}"
-                               class="text-purple-600 hover:text-purple-800 transition transform active:scale-90 duration-100 ease-in-out"
+                               class="text-purple-600 hover:text-purple-800 transition transform active:scale-90 duration-100 ease-in-out hover:bg-purple-100 rounded p-1"
                                title="Voir les fichiers PDF">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                      fill="none" stroke="currentColor" stroke-width="2"
@@ -154,23 +169,7 @@
 
 <!-- SweetAlert2 pour confirmation suppression -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    function confirmDelete(id) {
-        Swal.fire({
-            title: 'Êtes-vous sûr ?',
-            text: "Cette action est irréversible.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Oui, supprimer',
-            cancelButtonText: 'Annuler'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById(`delete-form-${id}`).submit();
-            }
-        })
-    }
-</script>
+
+<script src="{{ asset('js/table.js') }}"></script>
 
 @endsection

@@ -13,8 +13,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\Client::factory(40)->create(); // Remplacer 10 par le nombre de clients que vous voulez générer
-        $this->call(DocumentSeeder::class);
-
+        \App\Models\Client::factory(10)->create(); // Remplacer 10 par le nombre de clients que vous voulez générer
     }
 }

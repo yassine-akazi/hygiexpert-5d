@@ -1,7 +1,7 @@
-function confirmDelete(clientId) {
+function confirmDelete(id) {
     Swal.fire({
         title: 'Êtes-vous sûr ?',
-        text: "Cette action est irréversible !",
+        text: "Cette action est irréversible.",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
@@ -10,7 +10,7 @@ function confirmDelete(clientId) {
         cancelButtonText: 'Annuler'
     }).then((result) => {
         if (result.isConfirmed) {
-            document.getElementById('delete-form-' + clientId).submit();
+            document.getElementById(`delete-form-${id}`).submit();
         }
-    });
+    })
 }

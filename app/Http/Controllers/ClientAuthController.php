@@ -18,8 +18,7 @@ class ClientAuthController extends Controller
 
     if (Auth::guard('client')->attempt($credentials, $remember)) {
         if ($remember) {
-            cookie()->queue('remember_email', $request->email, 60 * 24 * 30);
-            
+            cookie()->queue('remember_email', $request->email, 1440);            
 
         } else {
             cookie()->queue(cookie()->forget('remember_email'));

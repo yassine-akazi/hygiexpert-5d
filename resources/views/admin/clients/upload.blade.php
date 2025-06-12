@@ -36,26 +36,30 @@
 
     {{-- Success / Error Messages --}}
     @if(session('success'))
-        <div class="mb-8 p-5 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 text-green-800 dark:text-green-300 border-l-4 border-green-500 rounded-xl shadow-sm">
-            <div class="flex items-center gap-3">
-                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span class="font-medium">{{ session('success') }}</span>
-            </div>
-        </div>
-    @endif
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Succès',
+                text: @json(session('success')),
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+@endif
 
-    @if(session('error'))
-        <div class="mb-8 p-5 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 text-red-800 dark:text-red-300 border-l-4 border-red-500 rounded-xl shadow-sm">
-            <div class="flex items-center gap-3">
-                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span class="font-medium">{{ session('error') }}</span>
-            </div>
-        </div>
-    @endif
+@if(session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erreur',
+                text: @json(session('error')),
+                confirmButtonText: 'Fermer'
+            });
+        });
+    </script>
+@endif
 
     @if ($errors->any())
         <div class="mb-8 p-5 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 text-red-800 dark:text-red-300 border-l-4 border-red-500 rounded-xl shadow-sm">
@@ -133,5 +137,5 @@
         </div>
     </form>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection
