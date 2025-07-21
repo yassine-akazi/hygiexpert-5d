@@ -171,7 +171,7 @@
   <div class="overflow-hidden max-w-7xl mx-auto px-6">
     <div class="animate-slide flex gap-6">
       @for ($i = 0; $i < 3; $i++) {{-- Répétition pour un défilement long --}}
-        @for ($j = 1; $j <= 9; $j++)
+        @for ($j = 1; $j <= 11; $j++)
           <img src="{{ asset('images/partenaires/logo' . $j . '.png') }}"
                alt="Partenaire {{ $j }}"
                class="h-20 object-contain  transition duration-300" />
@@ -186,8 +186,8 @@
   <h2 class="text-center text-3xl font-extrabold text-gray-700 mb-4">Certifié par :</h2>
   <div class="overflow-hidden max-w-6xl mx-auto px-6">
     <div class="animate-slide flex gap-6">
-      @for ($i = 0; $i < 4; $i++) {{-- Répéter pour remplir le slide avec 4 logos --}}
-        @for ($j =1; $j <= 4; $j++) {{-- 4 logos disponibles --}}
+      @for ($i = 0; $i < 6; $i++) {{-- Répéter pour remplir le slide avec 4 logos --}}
+        @for ($j =1; $j <= 6; $j++) {{-- 4 logos disponibles --}}
           <img src="{{ asset('images/certifications/cert' . $j . '.png') }}"
                alt="Certification {{ $j }}"
                class="h-20 object-contain   transition duration-300" />
